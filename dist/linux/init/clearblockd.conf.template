@@ -1,5 +1,5 @@
 #!upstart
-description "counterblockd (testnet)"
+description "clearblockd (mainnet)"
 limit nofile 32768 32768
 
 # When to start the service
@@ -15,6 +15,5 @@ respawn limit 10 60 # 10 times in 60 seconds
 script
 USER=!RUN_AS_USER!
 USER_HOME=!USER_HOMEDIR!
-start-stop-daemon --start --pidfile $USER_HOME/.config/counterblockd-testnet/counterblockd.pid --chuid $USER --exec /usr/local/bin/counterblockd -- --data-dir=$USER_HOME/.config/counterblockd-testnet --testnet
+start-stop-daemon --start --pidfile $USER_HOME/.config/clearblockd/clearblockd.pid --chuid $USER --exec /usr/local/bin/clearblockd
 end script
-

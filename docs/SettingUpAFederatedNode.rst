@@ -1,25 +1,25 @@
-Setting up a Counterblock Federated Node
+Setting up a Clearblock Federated Node
 ==============================================
 
 Introduction
 -------------
 
-A Counterblock Federated Node is a self-contained server that runs the software necessary to support one or more "roles".
+A Clearblock Federated Node is a self-contained server that runs the software necessary to support one or more "roles".
 Such roles may be:
-   * Counterwallet server
+   * Clearwallet server
    * Vending machine
    * Block explorer server (future)
 
 Each backend server runs `multiple services <components>`__ (some required, and some optional, or based on the role chosen).
 As each server is self-contained, they can be combined by the client-side software to allow for high-availability/load balancing.
 
-For instance, software such as Counterwallet may then utilize these backend servers in making API calls either sequentially (i.e. failover) or in
-parallel (i.e. consensus-based). For instance, with Counterwallet, when a user logs in, this list is shuffled so that
+For instance, software such as Clearwallet may then utilize these backend servers in making API calls either sequentially (i.e. failover) or in
+parallel (i.e. consensus-based). For instance, with Clearwallet, when a user logs in, this list is shuffled so that
 in aggregate, user requests are effectively load-balanced across available servers. Indeed, by setting up multiple such
-(Counterblock) Federated Nodes, one can utilize a similar redundancy/reliability model in one's own 3rd party application
-that Counterwallet utilizes. Or, one can utilize a simplier configuration based on a single, stand-alone server.
+(Clearblock) Federated Nodes, one can utilize a similar redundancy/reliability model in one's own 3rd party application
+that Clearwallet utilizes. Or, one can utilize a simplier configuration based on a single, stand-alone server.
 
-This document describes how one can set up their own Counterblock Federated Node server(s). It is primarily intended
+This document describes how one can set up their own Clearblock Federated Node server(s). It is primarily intended
 for system administrators and developers.
 
 
@@ -28,39 +28,39 @@ for system administrators and developers.
 Node Services/Components
 -------------------------
 
-counterpartyd (Required)
+clearinghoused (Required)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``counterpartyd`` is the Counterparty reference client itself. It's responsibilities include parsing out Counterparty
-transactions from the Bitcoin blockchain. It has a basic command line interface, and a reletively low-level API for
+``clearinghoused`` is the Clearinghouse reference client itself. It's responsibilities include parsing out Clearinghouse
+transactions from the Viacoin blockchain. It has a basic command line interface, and a reletively low-level API for
 getting information on specific transactions, or general state info.
 
-counterblockd (Required)
+clearblockd (Required)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``counterblockd`` daemon provides a more high-level API that layers on top of ``counterpartyd``'s API, and includes extended
-information, such as market and price data, trade operations, asset history, and more. It is used extensively by Counterwallet
+The ``clearblockd`` daemon provides a more high-level API that layers on top of ``clearinghoused``'s API, and includes extended
+information, such as market and price data, trade operations, asset history, and more. It is used extensively by Clearwallet
 itself, and is appropriate for use by applications that require additional API-based functionality beyond the scope of
-what ``counterpartyd`` provides.
+what ``clearinghoused`` provides.
 
-``counterblockd`` also provides a proxy-based interface to all ``counterpartyd`` API methods, via the ``proxy_to_counterpartyd`` API call.
+``clearblockd`` also provides a proxy-based interface to all ``clearinghoused`` API methods, via the ``proxy_to_clearinghoused`` API call.
 
 insight (Optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``insight`` allows for local querying of balance information and UTXOs for arbitrary addresses. This is a feature not available
-to ``bitcoind`` itself. Alternatives to running ``insight`` on the server are using a service like ``blockr.io``, which
-both ``counterpartyd`` and ``counterblockd`` support. For the most reliable service, we recommend that production
+to ``viacoind`` itself. Alternatives to running ``insight`` on the server are using a service like ``blockr.io``, which
+both ``clearinghoused`` and ``clearblockd`` support. For the most reliable service, we recommend that production
 servers (at least) run ``insight`` locally.
 
 armory_utxsvr (Optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This service is used by ``counterblockd`` with Counterwallet, to allow for the creation of unsigned transaction
+This service is used by ``clearblockd`` with Clearwallet, to allow for the creation of unsigned transaction
 ASCII text blocks, which may then be used with an `Offline Armory configuration <https://bitcoinarmory.com/about/using-our-wallet/>`__.
 This service requires Armory itself, which is automatically installed as part of the Federated Node setup procedure.
 
-Counterwallet, etc.
+Clearwallet, etc.
 ^^^^^^^^^^^^^^^^^^^^
 
 The specific end-functionality, that builds off of the base services provided. For instance.
@@ -72,7 +72,7 @@ Federated Node Provisioning
 Production
 ^^^^^^^^^^^^
 
-Here are the recommendations and/or requirements when setting up a production-grade Counterblock Federated Node:
+Here are the recommendations and/or requirements when setting up a production-grade Clearblock Federated Node:
 
 **Server Hardware/Network Recommendations:**
 
@@ -86,7 +86,7 @@ Here are the recommendations and/or requirements when setting up a production-gr
 The exact disk space required will be dependent on what services are run on the node::
 
 * Base System: **20GB** (to be safe)
-* ``counterpartyd``, ``counterblockd`` databases: **~200MB**
+* ``clearinghoused``, ``clearblockd`` databases: **~200MB**
 * ``insight``: **~30GB** (mainnet), **~3GB** (testnet)
 * ``armory_utxsvr``: **~25GB** (mainnet), **~3GB** (testnet)
 
@@ -113,7 +113,7 @@ Before running this script, we strongly advise the following:
 - Only one or two trusted individuals should have access to the box. All root access through ``sudo``.
 - Utilize 2FA (two-factor authentication) on SSH and any other services that require login.
   `Duo <https://www.duosecurity.com/>`__ is a good choice for this (and has great `SSH integration <https://www.duosecurity.com/unix>`__).
-- The system should have a proper hostname (e.g. counterblock.myorganization.org), and your DNS provider should be DDOS resistant
+- The system should have a proper hostname (e.g. clearblock.myorganization.org), and your DNS provider should be DDOS resistant
 - If running multiple servers, consider other tweaks on a per-server basis to reduce homogeneity.  
 - Enable Ubuntu's  `automated security updates <http://askubuntu.com/a/204>`__ (our script will do this if you didn't)
 
@@ -121,7 +121,7 @@ Before running this script, we strongly advise the following:
 Testing / Development
 ^^^^^^^^^^^^^^^^^^^^^^
 
-If you'd like to set up a Counterblock Federated Node system for testing and development, the requirements are minimal. Basically you
+If you'd like to set up a Clearblock Federated Node system for testing and development, the requirements are minimal. Basically you
 need to set up a Virtual Machine (VM) instance (or hardware) at the Ubuntu version listed above, at least **2 GB**
 of memory, and enough disk space to cover the installation and use of the desired components.
 
@@ -129,22 +129,22 @@ Node Setup
 -----------
 
 Once the server is provisioned and set up as above, you will need to install all of the necessary software and dependencies. We have an
-installation script for this, that is fully automated **and installs ALL dependencies, including ``bitcoind`` and ``insight``**::
+installation script for this, that is fully automated **and installs ALL dependencies, including ``viacoind`` and ``insight``**::
 
-    cd && wget -qO setup_federated_node.py https://raw.github.com/CounterpartyXCP/counterpartyd_build/master/setup_federated_node.py
+    cd && wget -qO setup_federated_node.py https://raw.github.com/ClearinghouseXCP/clearinghoused_build/master/setup_federated_node.py
     sudo python3 setup_federated_node.py
 
 Then just follow the on-screen prompts (choosing to build from *master* if you are building a production node,
 or from *develop* **only** if you are a developer or want access to bleeding edge code that is not fully tested).
 
-Once done, start up ``bitcoind`` daemon(s)::
+Once done, start up ``viacoind`` daemon(s)::
 
-    sudo service bitcoind start
-    sudo service bitcoind-testnet start
+    sudo service viacoind start
+    sudo service viacoind-testnet start
     
-    sudo tail -f ~xcp/.bitcoin/debug.log 
+    sudo tail -f ~xcp/.viacoin/debug.log 
 
-That last command will give you information on the Bitcoin blockchain download status. After the blockchain starts
+That last command will give you information on the Viacoin blockchain download status. After the blockchain starts
 downloading, **if you've elected to install and use** ``insight``, you can launch the ``insight`` daemon(s)::
 
     sudo service insight start
@@ -152,33 +152,33 @@ downloading, **if you've elected to install and use** ``insight``, you can launc
     
     sudo tail -f ~xcp/insight-api/insight.log 
 
-As well as ``armory_utxsvr``, if you're using that (Counterwallet role only)::
+As well as ``armory_utxsvr``, if you're using that (Clearwallet role only)::
 
     sudo service armory_utxsvr start
     sudo service armory_utxsvr-testnet start
     
     sudo tail -f ~xcp/.config/armory/armory_utxsvr.log
 
-And ``counterpartyd`` itself::
+And ``clearinghoused`` itself::
 
-    sudo service counterpartyd start
-    sudo service counterpartyd-testnet start
+    sudo service clearinghoused start
+    sudo service clearinghoused-testnet start
     
-    sudo tail -f ~xcp/.config/counterpartyd/counterpartyd.log
+    sudo tail -f ~xcp/.config/clearinghoused/clearinghoused.log
 
-Then, watching these log, wait for the insight sync (as well as the bitcoind sync and counterpartyd syncs) to finish,
+Then, watching these log, wait for the insight sync (as well as the viacoind sync and clearinghoused syncs) to finish,
 which should take between 7 and 12 hours. After this is all done, reboot the box for the new services to
-start (which includes both ``counterpartyd`` and ``counterblockd``).
+start (which includes both ``clearinghoused`` and ``clearblockd``).
 
-``counterblockd``, after starting up must then sync to ``counterpartyd``. It will do this automatically, and the
-process will take between 20 minutes to 1 hour most likely. You can check on the status of ``counterblockd``'s
+``clearblockd``, after starting up must then sync to ``clearinghoused``. It will do this automatically, and the
+process will take between 20 minutes to 1 hour most likely. You can check on the status of ``clearblockd``'s
 sync using::
 
-    sudo tail -f ~xcp/.config/counterblockd/counterblockd.log
+    sudo tail -f ~xcp/.config/clearblockd/clearblockd.log
 
 Once it is fully synced up, you should be good to proceed. The next step is to simply open up a web browser, and
 go to the IP address/hostname of the server. You will then be presented to accept your self-signed SSL certificate, and
-after doing that, should see the web interface for the role you selected (e.g. Counterwallet login screen, if Counterwallet
+after doing that, should see the web interface for the role you selected (e.g. Clearwallet login screen, if Clearwallet
 was chosen at node setup time). From this point, you can proceed testing the necessary functionality on your own system(s).
 
 
@@ -188,14 +188,14 @@ Getting a SSL Certificate
 By default, the system is set up to use a self-signed SSL certificate. If you are hosting your services for others, 
 you should get your own SSL certificate from your DNS registrar so that your users don't see a certificate warning when
 they visit your site. Once you have that certificate, create a nginx-compatible ``.pem`` file, and place that
-at ``/etc/ssl/certs/counterblockd.pem``. Then, place your SSL private key at ``/etc/ssl/private/counterblockd.key``.
+at ``/etc/ssl/certs/clearblockd.pem``. Then, place your SSL private key at ``/etc/ssl/private/clearblockd.key``.
 
-After doing this, edit the ``/etc/nginx/sites-enabled/counterblock.conf`` file. Comment out the two development
+After doing this, edit the ``/etc/nginx/sites-enabled/clearblock.conf`` file. Comment out the two development
 SSL certificate lines, and uncomment the production SSL cert lines, like so::
 
     #SSL - For production use
-    ssl_certificate      /etc/ssl/certs/counterblockd.pem;
-    ssl_certificate_key  /etc/ssl/private/counterblockd.key;
+    ssl_certificate      /etc/ssl/certs/clearblockd.pem;
+    ssl_certificate_key  /etc/ssl/private/clearblockd.key;
   
     #SSL - For development use
     #ssl_certificate      /etc/ssl/certs/ssl-cert-snakeoil.pem;
@@ -209,49 +209,49 @@ Then restart nginx::
 Troubleshooting
 ------------------------------------
 
-If you experience issues with your Counterblock Federated Node, a good start is to check out the logs. Something like the following should work::
+If you experience issues with your Clearblock Federated Node, a good start is to check out the logs. Something like the following should work::
 
     #mainnet
-    sudo tail -f ~xcp/.config/counterpartyd/counterpartyd.log
-    sudo tail -f ~xcp/.config/counterblockd/countewalletd.log
-    sudo tail -f ~xcp/.config/counterpartyd/api.error.log
-    sudo tail -f ~xcp/.config/counterblockd/api.error.log
+    sudo tail -f ~xcp/.config/clearinghoused/clearinghoused.log
+    sudo tail -f ~xcp/.config/clearblockd/countewalletd.log
+    sudo tail -f ~xcp/.config/clearinghoused/api.error.log
+    sudo tail -f ~xcp/.config/clearblockd/api.error.log
 
     #testnet
-    sudo tail -f ~xcp/.config/counterpartyd-testnet/counterpartyd.log
-    sudo tail -f ~xcp/.config/counterblockd-testnet/counterblockd.log
-    sudo tail -f ~xcp/.config/counterpartyd-testnet/api.error.log
-    sudo tail -f ~xcp/.config/counterblockd-testnet/api.error.log
+    sudo tail -f ~xcp/.config/clearinghoused-testnet/clearinghoused.log
+    sudo tail -f ~xcp/.config/clearblockd-testnet/clearblockd.log
+    sudo tail -f ~xcp/.config/clearinghoused-testnet/api.error.log
+    sudo tail -f ~xcp/.config/clearblockd-testnet/api.error.log
     
     #relevant nginx logs
-    sudo tail -f /var/log/nginx/counterblock.access.log
-    sudo tail -f /var/log/nginx/counterblock.error.log
+    sudo tail -f /var/log/nginx/clearblock.access.log
+    sudo tail -f /var/log/nginx/clearblock.error.log
 
 These logs should hopefully provide some useful information that will help you further diagnose your issue. You can also
 keep tailing them (or use them with a log analysis tool like Splunk) to gain insight on the current
-status of ``counterpartyd``/``counterblockd``.
+status of ``clearinghoused``/``clearblockd``.
 
 Also, you can start up the daemons in the foreground, for easier debugging, using the following sets of commands::
 
-    #bitcoind
-    sudo su -s /bin/bash -c 'bitcoind -datadir=/home/xcp/.bitcoin' xcpd
-    sudo su -s /bin/bash -c 'bitcoind -datadir=/home/xcp/.bitcoin-testnet' xcpd
+    #viacoind
+    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xcp/.viacoin' xcpd
+    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xcp/.viacoin-testnet' xcpd
 
-    #counterpartyd & counterblockd mainnet
-    sudo su -s /bin/bash -c 'counterpartyd --data-dir=/home/xcp/.config/counterpartyd' xcpd
-    sudo su -s /bin/bash -c 'counterblockd --data-dir=/home/xcp/.config/counterblockd -v' xcpd
+    #clearinghoused & clearblockd mainnet
+    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xcp/.config/clearinghoused' xcpd
+    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xcp/.config/clearblockd -v' xcpd
     
-    #counterpartyd & counterblockd testnet
-    sudo su -s /bin/bash -c 'counterpartyd --data-dir=/home/xcp/.config/counterpartyd-testnet --testnet' xcpd
-    sudo su -s /bin/bash -c 'counterblockd --data-dir=/home/xcp/.config/counterblockd-testnet --testnet -v' xcpd
+    #clearinghoused & clearblockd testnet
+    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xcp/.config/clearinghoused-testnet --testnet' xcpd
+    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xcp/.config/clearblockd-testnet --testnet -v' xcpd
 
-You can also run ``bitcoind`` commands directly, e.g.::
+You can also run ``viacoind`` commands directly, e.g.::
 
     #mainnet
-    sudo su - xcpd -s /bin/bash -c "bitcoind -datadir=/home/xcp/.bitcoin getinfo"
+    sudo su - xcpd -s /bin/bash -c "viacoind -datadir=/home/xcp/.viacoin getinfo"
     
     #testnet
-    sudo su - xcpd -s /bin/bash -c "bitcoind -datadir=/home/xcp/.bitcoin-testnet getinfo"
+    sudo su - xcpd -s /bin/bash -c "viacoind -datadir=/home/xcp/.viacoin-testnet getinfo"
 
 
 Monitoring the Server
@@ -259,24 +259,24 @@ Monitoring the Server
 
 To monitor the server, you can use a 3rd-party service such as [Pingdom](http://www.pingdom.com) or [StatusCake](http://statuscake.com).
 The federated node allows these (and any other monitoring service) to query the basic status of the server (e.g. the ``nginx``,
-``counterblockd`` and ``counterpartyd`` services) via making a HTTP GET call to one of the following URLs:
+``clearblockd`` and ``clearinghoused`` services) via making a HTTP GET call to one of the following URLs:
 
 * ``/_api/`` (for mainnet) 
 * ``/_t_api/`` (for testnet)
 
 If all services are up, a HTTP 200 response with the following data will be returned::
 
-    {"counterpartyd": "OK", "counterblockd_ver": "1.3.0", "counterpartyd_ver": "9.31.0", "counterblockd": "OK",
-    "counterblockd_check_elapsed": 0.0039348602294921875, "counterpartyd_last_block": {
+    {"clearinghoused": "OK", "clearblockd_ver": "1.3.0", "clearinghoused_ver": "9.31.0", "clearblockd": "OK",
+    "clearblockd_check_elapsed": 0.0039348602294921875, "clearinghoused_last_block": {
     "block_hash": "0000000000000000313c4708da5b676f453b41d566832f80809bc4cb141ab2cd", "block_index": 311234,
-    "block_time": 1405638212}, "local_online_users": 7, "counterpartyd_check_elapsed": 0.003687143325805664, 
-    "counterblockd_error": null, "counterpartyd_last_message_index": 91865}
+    "block_time": 1405638212}, "local_online_users": 7, "clearinghoused_check_elapsed": 0.003687143325805664, 
+    "clearblockd_error": null, "clearinghoused_last_message_index": 91865}
     
-Note the ``"counterpartyd": "OK"`` and ``"counterblockd": "OK"`` items.
+Note the ``"clearinghoused": "OK"`` and ``"clearblockd": "OK"`` items.
 
-If all services but ``counterpartyd`` are up, a HTTP 500 response with ``"counterpartyd": "NOT OK"``, for instance.
+If all services but ``clearinghoused`` are up, a HTTP 500 response with ``"clearinghoused": "NOT OK"``, for instance.
 
-If ``counterblockd`` is not working properly, ``nginx`` will return a HTTP 503 (Gateway unavailable) or 500 response.
+If ``clearblockd`` is not working properly, ``nginx`` will return a HTTP 503 (Gateway unavailable) or 500 response.
 
 If ``nginx`` is not working properly, either a HTTP 5xx response, or no response at all (i.e. timeout) will be returned.
 
@@ -290,15 +290,15 @@ User Configuration
 Note that when you set up a federated node, the script creates two new users on the system: ``xcp`` and ``xcpd``. (The
 ``xcp`` user also has an ``xcp`` group created for it as well.)
 
-The script installs ``counterpartyd``, ``counterwallet``, etc into the home directory of the ``xcp`` user. This
-user also owns all installed files. However, the daemons (i.e. ``bitcoind``, ``insight``, ``counterpartyd``,
-``counterblockd``, and ``nginx``) are actually run as the ``xcpd`` user, which has no write access to the files
-such as the ``counterwallet`` and ``counterpartyd`` source code files. The reason things are set up like this is so that
+The script installs ``clearinghoused``, ``clearwallet``, etc into the home directory of the ``xcp`` user. This
+user also owns all installed files. However, the daemons (i.e. ``viacoind``, ``insight``, ``clearinghoused``,
+``clearblockd``, and ``nginx``) are actually run as the ``xcpd`` user, which has no write access to the files
+such as the ``clearwallet`` and ``clearinghoused`` source code files. The reason things are set up like this is so that
 even if there is a horrible bug in one of the products that allows for a RCE (or Remote Control Exploit), where the attacker
 would essentially be able to gain the ability to execute commands on the system as that user, two things should prevent this:
 
 * The ``xcpd`` user doesn't actually have write access to any sensitive files on the server (beyond the log and database
-  files for ``bitcoind``, ``counterpartyd``, etc.)
+  files for ``viacoind``, ``clearinghoused``, etc.)
 * The ``xcpd`` user uses ``/bin/false`` as its shell, which prevents the attacker from gaining shell-level access
 
 This setup is such to minimize (and hopefully eliminate) the impact from any kind of potential system-level exploit.
@@ -308,34 +308,34 @@ Easy Updating
 
 To update the system with new code releases, you simply need to rerun the ``setup_federated_node`` script, like so::
 
-    cd ~xcp/counterpartyd_build
+    cd ~xcp/clearinghoused_build
     sudo ./setup_federated_node.py
     
 As prompted, you should be able to choose just to update from git ("G"), instead of to rebuild. However, you would choose the rebuild
-option if there were updates to the ``counterpartyd_build`` system files for the federated node itself (such as the
+option if there were updates to the ``clearinghoused_build`` system files for the federated node itself (such as the
 ``nginx`` configuration, or the init scripts) that you wanted/needed to apply. Otherwise, update should be fine. 
 
 
-Counterwallet-Specific
+Clearwallet-Specific
 -----------------------
 
-Counterwallet Multi-Server Setups
+Clearwallet Multi-Server Setups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Counterwallet should work out-of-the-box in a scenario where you have a single Counterblock Federated Node that both hosts the
-static site content, as well as the backend Counterblock API services. You will need to read and follow this section if any of the
+Clearwallet should work out-of-the-box in a scenario where you have a single Clearblock Federated Node that both hosts the
+static site content, as well as the backend Clearblock API services. You will need to read and follow this section if any of the
 following apply to your situation:
 
-- You have more than one server hosting the content (i.e. javascript, html, css resources) and API services (backend ``counterblockd``, etc)
+- You have more than one server hosting the content (i.e. javascript, html, css resources) and API services (backend ``clearblockd``, etc)
 - Or, you have a different set of hosts hosting API services than those hosting the static site content
 - Or, you are hosting the static site content on a CDN
 
-In these situations, you need to create a small file called ``servers.json`` in the ``counterblock/`` directory.
+In these situations, you need to create a small file called ``servers.json`` in the ``clearblock/`` directory.
 This file will contain a valid JSON-formatted object, containing an array of all of your backend servers, as well as
 a number of other site specific configuration properties. For example::
 
     { 
-      "servers": [ "https://counterblock1.mydomain.com", "https://counterblock2.mydomain.com", "https://counterblock3.mydomain.com" ],
+      "servers": [ "https://clearblock1.mydomain.com", "https://clearblock2.mydomain.com", "https://clearblock3.mydomain.com" ],
       "forceTestnet": true,
       "googleAnalyticsUA": "UA-48454783-2",
       "googleAnalyticsUA-testnet": "UA-48454783-4",
@@ -356,14 +356,14 @@ make use of these services.
   ``betting``, ``rps``, ``dividend``, ``exchange``, ``leaderboard``, ``portfolio``, ``stats`` and ``history``. Normally
   this can just be ``[]`` (an empty list) to not disable anything.
 
-Once done, save this file and make sure it exists on all servers you are hosting Counterwallet static content on. Now, when you go
-to your Counterwallet site, the server will read in this file immediately after loading the page, and set the list of
+Once done, save this file and make sure it exists on all servers you are hosting Clearwallet static content on. Now, when you go
+to your Clearwallet site, the server will read in this file immediately after loading the page, and set the list of
 backend API hosts from it automatically.
 
 Giving Op Chat Access
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Counterwallet has its own built-in chatbox. Users in the chat box are able to have operator (op) status, which allows them
+Clearwallet has its own built-in chatbox. Users in the chat box are able to have operator (op) status, which allows them
 to do things like ban or rename other users. Any op can give any other user op status via the ``/op`` command, typed into
 the chat window. However, manual database-level intervention is required to give op status to the first op in the system.
 
@@ -371,31 +371,31 @@ Doing this, however, is simple. Here's an example that gives ``testuser1`` op ac
 command line for every node in the cluster::
 
     #mainnet
-    mongo counterblockd
+    mongo clearblockd
     db.chat_handles.update({handle: "testuser1"}, {$set: {op: true}})
     
     #testnet
-    mongo counterblockd_testnet
+    mongo clearblockd_testnet
     db.chat_handles.update({handle: "testuser1"}, {$set: {op: true}})
 
-Counterwallet MultiAPI specifics
+Clearwallet MultiAPI specifics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
 
-    By default, Counterblock Federated Nodes can also host Counterwallet content (this will change in the future).
-    Regarding this, the Counterparty team itself operates the primary Counterwallet platform. However, as Counterwallet is open source
-    software, it is possible to host your own site with Counterwallet site (for your personal use, or as an offering to
-    others), or to even host your own Counterwallet servers to use with your own Counterparty wallet implementation.
-    The Counterparty team supports this kind of activity (as long as the servers are secure), as it aids with increasing decentralization.
+    By default, Clearblock Federated Nodes can also host Clearwallet content (this will change in the future).
+    Regarding this, the Clearinghouse team itself operates the primary Clearwallet platform. However, as Clearwallet is open source
+    software, it is possible to host your own site with Clearwallet site (for your personal use, or as an offering to
+    others), or to even host your own Clearwallet servers to use with your own Clearinghouse wallet implementation.
+    The Clearinghouse team supports this kind of activity (as long as the servers are secure), as it aids with increasing decentralization.
         
-    Also note that due to the nature of Counterwallet being a deterministic wallet, users using one Counterwallet platform (i.e. the
-    official one, for instance) have the flexibility to start using a different Counterwallet platform instead at any time,
+    Also note that due to the nature of Clearwallet being a deterministic wallet, users using one Clearwallet platform (i.e. the
+    official one, for instance) have the flexibility to start using a different Clearwallet platform instead at any time,
     and as funds (i.e. private keys) are not stored on the server in any fashion, they will be able to see their funds on either.
     (Note that the only thing that will not migrate are saved preferences, such as address aliases, the theme setting, etc.)
 
-Counterwallet utilizes a sort of a "poor man's load balancing/failover" implementation called multiAPI (and implemented
-[here](https://github.com/CounterpartyXCP/counterwallet/blob/master/src/js/util.api.js)). multiAPI can operate in a number of fashions.
+Clearwallet utilizes a sort of a "poor man's load balancing/failover" implementation called multiAPI (and implemented
+[here](https://github.com/Clearinghouse/clearwallet/blob/master/src/js/util.api.js)). multiAPI can operate in a number of fashions.
 
 **multiAPIFailover for Read API (``get_``) Operations**
 
@@ -405,25 +405,25 @@ list is called, and so on. The result of the first server to successfully return
 
 Here, a "hacked" server could be modified to return bogus data. As (until being discovered) the server would be in the
 shuffled list, some clients may end up consulting it. However, as this functionality is essentially for data queries only,
-the worse case result is that a Counterwallet client is shown incorrect/modified data which leads to misinformed actions
+the worse case result is that a Clearwallet client is shown incorrect/modified data which leads to misinformed actions
 on the user's behalf. Moreover, the option always exists to move all read-queries to use multiAPIConsensus in the future should the need arise.
 
 **multiAPIConsensus for Action/Write (``create_``) Operations**
 
 Based on this multiAPI capability, the wallet itself consults more than one of these Federated Nodes via consensus especially
-for all ``create_``-type operations. For example, if you send XCP, counterpartyd on each server is still composing and sending
+for all ``create_``-type operations. For example, if you send XCP, clearinghoused on each server is still composing and sending
 back the unsigned raw transaction, but for data security, it compares the results returned from all servers, and will 
 only sign and broadcast (both client-side) if all the results match). This is known as *multiAPIConsensus*.
 
 The ultimate goal here is to have a federated net of semi-trusted backend servers not tied to any one country, provider, network or
 operator/admin. Through requiring consensus on the unsigned transactions returned for all ``create_`` operations, 'semi-trust'
 on a single server basis leads to an overall trustworthy network. Worst case, if backend server is hacked and owned
-(and the counterpartyd code modified), then you may get some invalid read results, but it won't be rewriting your XCP send
+(and the clearinghoused code modified), then you may get some invalid read results, but it won't be rewriting your XCP send
 destination address, for example. The attackers would have to hack the code on every single server in the same exact
 way, undetected, to do that.
 
-Moreover, the Counterwallet web client contains basic transaction validation code that will check that any unsigned Bitcoin
-transaction returned from a Counterblock Federated Node contains expected inputs and outputs. This provides further
+Moreover, the Clearwallet web client contains basic transaction validation code that will check that any unsigned Viacoin
+transaction returned from a Clearblock Federated Node contains expected inputs and outputs. This provides further
 protection against potential attacks.
 
 multiAPIConsensus actually helps discover any potential "hacked" servers as well, since a returned consensus set with

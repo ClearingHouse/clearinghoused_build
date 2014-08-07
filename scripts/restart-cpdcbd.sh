@@ -1,7 +1,7 @@
 #!/bin/sh
 
-sudo service counterpartyd restart
-sudo service counterpartyd-testnet restart
+sudo service clearinghoused restart
+sudo service clearinghoused-testnet restart
 sleep 10
-sudo service counterblockd restart
-sudo service counterblockd-testnet restart
+sudo service clearblockd restart
+sudo service clearblockd-testnet restart

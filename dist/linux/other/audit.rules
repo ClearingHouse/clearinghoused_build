@@ -152,8 +152,8 @@
 ##
 -w /etc/nginx/ -p wa
 -w /etc/security/login_duo.conf -p wa
--w /home/xcp/counterpartyd_build -p wa
--w /home/xcp/counterwallet -p wa
+-w /home/xch/clearinghoused_build -p wa
+-w /home/xch/clearwallet -p wa
 
 ## Make the configuration immutable
 -e 2

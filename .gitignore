@@ -1,11 +1,11 @@
 *.py[cod]
 env
 env.cwalletd
-env.counterblockd
+env.clearblockd
 docs/_build/*
-dist/counterpartyd
-dist/counterblockd
-dist/counterwalletd
+dist/clearinghoused
+dist/clearblockd
+dist/clearwalletd
 bin
 npm-debug.log
 

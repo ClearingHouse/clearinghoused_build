@@ -3,20 +3,20 @@ Setting up insight
 
 .. info::
 
-    **If you are just running ``counterpartyd`` on mainnet, this section is optional.***
+    **If you are just running ``clearinghoused`` on mainnet, this section is optional.***
     
-    On the other hand, if you want to run ``counterpartyd`` on testnet, or want to use ``counterblockd``,
+    On the other hand, if you want to run ``clearinghoused`` on testnet, or want to use ``clearblockd``,
     going through this section is required.
     
      
-As part of operating, ``counterpartyd`` may and ``counterblockd`` does require data that ``bitcoind`` cannot currently provide. This includes things such
-as a BTC balance from an address not in the local ``bitcoind`` wallet, and a list of unspent transaction outputs (UXTO)
+As part of operating, ``clearinghoused`` may and ``clearblockd`` does require data that ``viacoind`` cannot currently provide. This includes things such
+as a BTC balance from an address not in the local ``viacoind`` wallet, and a list of unspent transaction outputs (UXTO)
 for an arbitrary address. In order to facilitate getting access to this information in a way that is robust and doesn't
 depend on a 3rd party site such as blockchain.info, we make use of ``insight``, which is a free and open source server product
-made by BitPay which offers and API that supplements the information ``bitcoind``'s API provides.
+made by BitPay which offers and API that supplements the information ``viacoind``'s API provides.
 
-Both ``counterpartyd`` and ``counterblockd`` can communicate with ``insight``. If you need to install ``insight``,
-normally, you'll run it on the same computer as your instance of ``bitcoind`` and ``counterpartyd`` runs on. However,
+Both ``clearinghoused`` and ``clearblockd`` can communicate with ``insight``. If you need to install ``insight``,
+normally, you'll run it on the same computer as your instance of ``viacoind`` and ``clearinghoused`` runs on. However,
 you can also run an instance of it on a different server entirely.
 
 
@@ -45,27 +45,27 @@ Once these are installed, type Windows Key-R and enter ``%comspec% /k ""C:\Progr
 to open a Windows Visual Studio 2012 development command prompt. Then, type the following::
 
     cd C:\
-    git clone https://github.com/bitpay/insight-api.git
+    git clone https://github.com/viacoin/insight-api.git
     cd C:\insight-api
     npm install
 
-Next, locate your current ``bitcoind`` data directory, which is normally located at ``%APPDATA%\Bitcoin``. Examples of this are:
+Next, locate your current ``viacoind`` data directory, which is normally located at ``%APPDATA%\Viacoin``. Examples of this are:
 
-- ``C:\Users\<your username>\AppData\Roaming\Bitcoin`` (Windows 7/8/Server)
-- ``C:\Documents and Settings\<your username>\Application Data\Bitcoin`` (Windows XP)
+- ``C:\Users\<your username>\AppData\Roaming\Viacoin`` (Windows 7/8/Server)
+- ``C:\Documents and Settings\<your username>\Application Data\Viacoin`` (Windows XP)
 
 Copy this down to a text file.
 
 After this, type Windows Key-R and enter ``rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3``, then press OK.
 This will launch the System Properties panel. Here, click on Environment Variables, and under User Variables, add the following:
 
-- ``INSIGHT_NETWORK``: Set this to ``livenet`` if your ``bitcoind`` is running on mainnet. If on testnet, set this to ``testnet``
-- ``BITCOIND_DATADIR``: Set this to your ``bitcoind`` data dir you found in the step above
-- ``BITCOIND_USER``: Whatever your ``bitcoind`` RPC user is set to (``rpcuser=`` in the ``bitcoin.conf`` in your ``bitcoind`` data dir)
-- ``BITCOIND_PASS``: Whatever your ``bitcoind`` RPC password is set to (``rpcpassword=`` in the ``bitcoin.conf`` in your ``bitcoind`` data dir)
+- ``INSIGHT_NETWORK``: Set this to ``livenet`` if your ``viacoind`` is running on mainnet. If on testnet, set this to ``testnet``
+- ``VIACOIND_DATADIR``: Set this to your ``viacoind`` data dir you found in the step above
+- ``VIACOIND_USER``: Whatever your ``viacoind`` RPC user is set to (``rpcuser=`` in the ``viacoin.conf`` in your ``viacoind`` data dir)
+- ``VIACOIND_PASS``: Whatever your ``viacoind`` RPC password is set to (``rpcpassword=`` in the ``viacoin.conf`` in your ``viacoind`` data dir)
 
-If you are running on a different host, or set of ports, you will also need to set ``BITCOIND_HOST``, ``BITCOIND_PORT``,
-and ``BITCOIND_P2P_PORT`` as appropriate.
+If you are running on a different host, or set of ports, you will also need to set ``VIACOIND_HOST``, ``VIACOIND_PORT``,
+and ``VIACOIND_P2P_PORT`` as appropriate.
 
 Once done, click OK on both the Environment Variables and System Properties windows to save your changes and close them out.
 
@@ -81,11 +81,11 @@ You can run it on startup by adding to your Startup program group in Windows, or
 Next Steps
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-After running ``insight``, it should start parsing the blockchain data from the ``bitcoind`` data directory you specified
-(at ``BITCOIND_DATADIR``).
+After running ``insight``, it should start parsing the blockchain data from the ``viacoind`` data directory you specified
+(at ``VIACOIND_DATADIR``).
 
-You can do other things during this time, including normal use of ``counterpartyd``.
-Please do note that ``counterblockd`` (or ``counterpartyd`` where you are querying the API on behalf of addresses not in the local ``bitcoind``'s
+You can do other things during this time, including normal use of ``clearinghoused``.
+Please do note that ``clearblockd`` (or ``clearinghoused`` where you are querying the API on behalf of addresses not in the local ``viacoind``'s
 wallet) will not provide reliable results until this indexing is fully completed. 
 
 
@@ -101,7 +101,7 @@ Open up a command window and run the following to install::
     GYP_DIR=`python -c 'import gyp, os; print os.path.dirname(gyp.__file__)'`
     sudo mv ${GYP_DIR} ${GYP_DIR}_bkup
     
-    git clone https://github.com/bitpay/insight-api.git ~/insight-api && cd ~/insight-api
+    git clone https://github.com/viacoin/insight-api.git ~/insight-api && cd ~/insight-api
     npm install
     
 Running
@@ -110,16 +110,16 @@ Running
 To run insight, you'd do something like the following at a command prompt::
 
     export INSIGHT_NETWORK=livenet
-    export BITCOIND_DATADIR=$USER_HOME/.bitcoin
-    export BITCOIND_USER=`cat $USER_HOME/.bitcoin/bitcoin.conf | sed -n 's/.*rpcuser=\([^ \n]*\).*/\1/p'`
-    export BITCOIND_PASS=`cat $USER_HOME/.bitcoin/bitcoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'`
-    #BITCOIND_HOST -- specify to not use the default (localhost)
-    #BITCOIND_PORT -- specify to not use the default (8332)
-    #BITCOIND_P2P_PORT -- specify to not use the default (8333)
+    export VIACOIND_DATADIR=$USER_HOME/.viacoin
+    export VIACOIND_USER=`cat $USER_HOME/.viacoin/viacoin.conf | sed -n 's/.*rpcuser=\([^ \n]*\).*/\1/p'`
+    export VIACOIND_PASS=`cat $USER_HOME/.viacoin/viacoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'`
+    #VIACOIND_HOST -- specify to not use the default (localhost)
+    #VIACOIND_PORT -- specify to not use the default (5222)
+    #VIACOIND_P2P_PORT -- specify to not use the default (5223)
     node ~/insight-api/insight.js
 
 (Note that there is also an ``insight.conf.template`` and ``insight-testnet.conf.template`` upstart scripts that you can use in the
-``counterpartyd_build/dist/linux/init`` directory. Simply take them, copy over to ``/etc/init`` (without the ``.template`` suffix
+``clearinghoused_build/dist/linux/init`` directory. Simply take them, copy over to ``/etc/init`` (without the ``.template`` suffix
 to the file name) and modify ``!RUN_AS_USER!`` to be the username that you have installed insight as, then you can simply
 do something like::
 
@@ -128,9 +128,9 @@ do something like::
 Next steps
 ^^^^^^^^^^^
 
-After running ``insight``, it should start parsing the blockchain data from the ``bitcoind`` data directory you specified
-(at ``BITCOIND_DATADIR``). 
+After running ``insight``, it should start parsing the blockchain data from the ``viacoind`` data directory you specified
+(at ``VIACOIND_DATADIR``). 
 
-You can do other things during this time, including normal use of ``counterpartyd``.
-Please do note that ``counterblockd`` (or ``counterpartyd`` where you are querying the API on behalf of addresses not in the local ``bitcoind``'s
+You can do other things during this time, including normal use of ``clearinghoused``.
+Please do note that ``clearblockd`` (or ``clearinghoused`` where you are querying the API on behalf of addresses not in the local ``viacoind``'s
 wallet) will not provide reliable results until this indexing is fully completed. 

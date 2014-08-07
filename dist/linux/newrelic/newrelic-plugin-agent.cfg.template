@@ -11,8 +11,8 @@ Application:
     host: localhost
     port: 27017
     databases:
-      - counterblockd
-      - counterblockd_testnet
+      - clearblockd
+      - clearblockd_testnet
 
   #nginx:
   #  name: !HOSTNAME!-nginx

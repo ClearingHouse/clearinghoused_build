@@ -11,14 +11,14 @@ build_exe_options = {
 	"excludes": ["tkinter",],
 }
 
-scriptPath = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "counterpartyd"))
+scriptPath = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "clearinghoused"))
 
 sys.path.insert(0, scriptPath)
 path = sys.path
 
 base = None
-setup(  name = "counterpartyd",
+setup(  name = "clearinghoused",
         version = "0.1",
-        description = "Counterparty Daemon",
+        description = "ClearingHouse Daemon",
         options = {"build_exe": build_exe_options},
-        executables = [Executable(os.path.join(scriptPath, "counterpartyd.py"), base=base)])
+        executables = [Executable(os.path.join(scriptPath, "clearinghoused.py"), base=base)])

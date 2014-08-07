@@ -3,11 +3,11 @@ Building & Running from Source
 
 .. note::
 
-    Please make sure you've followed the instructions in :doc:`SettingUpBitcoind` before moving through this section.
+    Please make sure you've followed the instructions in :doc:`SettingUpViacoind` before moving through this section.
 
-This section provides information about how to install and run ``counterpartyd`` from source, using this
-``counterpartyd`` build system (as an alternative to setting it up manually). This method is suitable for
-Linux users, as well as Windows users that want to develop/enhance ``counterpartyd`` (or just don't want to
+This section provides information about how to install and run ``clearinghoused`` from source, using this
+``clearinghoused`` build system (as an alternative to setting it up manually). This method is suitable for
+Linux users, as well as Windows users that want to develop/enhance ``clearinghoused`` (or just don't want to
 use the binary installer).
 
 
@@ -19,11 +19,11 @@ Prerequisites
 
 .. note::
 
-    As of counterpartyd v9.34.0 due to issues with some Python modules, a 64-bit version of Python cannot be used
-    to build Counterparty out-of-the-box. For time being it is recommended to use a 32-bit version of Python 3.3.5
+    As of clearinghoused v9.34.0 due to issues with some Python modules, a 64-bit version of Python cannot be used
+    to build Clearinghouse out-of-the-box. For time being it is recommended to use a 32-bit version of Python 3.3.5
     on both the 32-bit and 64-bit version of Microsoft Windows (confirmed to work with Windows 7 SP1 x64).
 
-Minimally required to build ``counterpartyd`` from source is the following:
+Minimally required to build ``clearinghoused`` from source is the following:
 
 - Python 3.3.5 -- grab the `32-bit version <http://www.python.org/ftp/python/3.3.5/python-3.3.5.msi>`__
   or `64-bit version <http://www.python.org/ftp/python/3.3.5/python-3.3.5.amd64.msi>`__.
@@ -39,7 +39,7 @@ Minimally required to build ``counterpartyd`` from source is the following:
   options (except, select *"Run Git from the Windows Command Prompt"* on the appropriate screen)
 - You may need to install `Visual C++ 2010 Express <http://go.microsoft.com/?linkid=9709949>`__
 
-If you want to be able to build the Counterpartyd installer, also download the following:
+If you want to be able to build the Clearinghoused installer, also download the following:
 
 - Grab NSIS from `here <http://prdownloads.sourceforge.net/nsis/nsis-2.46-setup.exe?download>`__ -- Please choose the default
   options during installation, and install to the default path
@@ -54,7 +54,7 @@ Installing
 
 .. note::
 
-    Our install script (setup.py) requires administrator access to run (so that it can create a counterpartyd.bat file
+    Our install script (setup.py) requires administrator access to run (so that it can create a clearinghoused.bat file
     in your Windows directory). To allow for this, you must launch a command prompt **as administrator**. To do this
     under Windows 7, go to Start -> All Programs -> Accessories, then right click on Command Prompt and select "Run as administrator".
     More information on this is available from `this link <http://www.bleepingcomputer.com/tutorials/windows-elevated-command-prompt/>`__ (method 1 or 2 works fine).
@@ -62,37 +62,37 @@ Installing
 After launching a DOS command window using the instructions in the note above, type the following commands::
 
     cd C:\
-    git clone https://github.com/CounterpartyXCP/counterpartyd_build
-    cd counterpartyd_build
+    git clone https://github.com/ClearingHouse/clearinghoused_build
+    cd clearinghoused_build
     C:\Python33\python.exe setup.py
      
-The above steps will check out the build scripts to ``C:\counterpartyd_build``, and run the ``setup.py`` script, which
-will check out the newest version of ``counterpartyd`` itself from git, create a virtual environment with the
+The above steps will check out the build scripts to ``C:\clearinghoused_build``, and run the ``setup.py`` script, which
+will check out the newest version of ``clearinghoused`` itself from git, create a virtual environment with the
 required dependencies, and do other necessary tasks to integrate it into the system.
 
-If you chose to start ``counterpartyd`` at startup automatically, the setup script will also create a shortcut
-to ``counterpartyd`` in your Startup group. 
+If you chose to start ``clearinghoused`` at startup automatically, the setup script will also create a shortcut
+to ``clearinghoused`` in your Startup group. 
 
-Upon the successful completion of this script, you can now run ``counterpartyd`` using the steps below.
+Upon the successful completion of this script, you can now run ``clearinghoused`` using the steps below.
 
 
-Running counterpartyd built from Source
+Running clearinghoused built from Source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Counterpartyd does not require elevated ("administrator") privileges to be executed and operated.  
-After installing, open a command window and run ``counterpartyd`` in the foreground via::
+Clearinghoused does not require elevated ("administrator") privileges to be executed and operated.  
+After installing, open a command window and run ``clearinghoused`` in the foreground via::
 
-    counterpartyd server
+    clearinghoused server
 
-You can then open up another command window and run any of ``counterpartyd’s`` other functions, for example::
+You can then open up another command window and run any of ``clearinghoused’s`` other functions, for example::
 
-    counterpartyd send --source=12WQTnVbzhJRswra4TvGxq1RyhUkmiVXXm --destination=1QGZ4sCpvCgRizL5v4NniaKdZKzxBtVN3q --asset=XCP --quantity=5
+    clearinghoused send --source=12WQTnVbzhJRswra4TvGxq1RyhUkmiVXXm --destination=VQGZ4sCpvCgRizL5v4NniaKdZKzxBtVN3q --asset=XCH --quantity=5
 
-For more examples, see `this link <https://github.com/CounterpartyXCP/counterpartyd#examples>`__.
+For more examples, see `this link <https://github.com/ClearinghouseXCP/clearinghoused#examples>`__.
 
-To run the ``counterpartyd`` testsuite::
+To run the ``clearinghoused`` testsuite::
 
-    counterpartyd tests 
+    clearinghoused tests 
 
 
 Updating to the newest source
@@ -100,14 +100,14 @@ Updating to the newest source
 
 As the code is enhanced and improved on Github, you can refresh your local copy of the repositories like so::
 
-    cd C:\counterpartyd_build
+    cd C:\clearinghoused_build
     C:\Python33\python.exe setup.py update
 
-If, upon running counterpartyd, you get a missing dependency or some other error, you can always rerun
+If, upon running clearinghoused, you get a missing dependency or some other error, you can always rerun
 ``setup.py``, which will regenerate your dependencies listing to the libraries and versions as listed in
-`pip-requirements.txt <https://github.com/CounterpartyXCP/counterpartyd/blob/master/pip-requirements.txt>`__::
+`pip-requirements.txt <https://github.com/ClearingHouse/clearinghoused/blob/master/pip-requirements.txt>`__::
 
-    cd counterpartyd_build
+    cd clearinghoused_build
     C:\Python33\python.exe setup.py
 
 In case of a problem, refer to the list of requirements in ``pip-requirements.txt`` above and update system as
@@ -119,7 +119,7 @@ Building your own Installer
 Complete the instructions under **Prerequisites** above.
 Then, execute the following commands to build the installer package::
 
-    cd C:\counterpartyd_build
+    cd C:\clearinghoused_build
     C:\Python33\python.exe setup.py build
     
 If successful, you will be provided the location of the resulting installer package.
@@ -139,17 +139,17 @@ Support for other distributions is a future task.
 Installing
 ^^^^^^^^^^^^^^^^^^^^^^
 
-**As the user you want to run** ``counterpartyd`` **as**, launch a terminal window, and type the following::
+**As the user you want to run** ``clearinghoused`` **as**, launch a terminal window, and type the following::
 
     sudo apt-get -y update
     sudo apt-get -y install git-core python3
-    git clone https://github.com/CounterpartyXCP/counterpartyd_build ~/counterpartyd_build
-    cd ~/counterpartyd_build
+    git clone https://github.com/ClearingHouse/clearinghoused_build ~/clearinghoused_build
+    cd ~/clearinghoused_build
     sudo python3 setup.py
 
-The ``setup.py`` script will install necessary dependencies, check out the newest version of ``counterpartyd``
-itself from git, create the python environment for ``counterpartyd``, and install an upstart script that
-will automatically start ``counterpartyd`` on startup.
+The ``setup.py`` script will install necessary dependencies, check out the newest version of ``clearinghoused``
+itself from git, create the python environment for ``clearinghoused``, and install an upstart script that
+will automatically start ``clearinghoused`` on startup.
 
 
 Creating a default config
@@ -158,30 +158,30 @@ Creating a default config
 Follow the instructions listed under the **Config and Logging** section in :doc:`AdditionalTopics`.
 
 
-Running counterpartyd built from Source
+Running clearinghoused built from Source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After installing and creating the necessary basic config, run ``counterpartyd`` in the foreground to make sure
+After installing and creating the necessary basic config, run ``clearinghoused`` in the foreground to make sure
 everything works fine::
 
-    counterpartyd server
+    clearinghoused server
     
-(The above assumes ``/usr/local/bin`` is in your PATH, which is where the ``counterpartyd`` symlink (which just
-points to the ``run.py`` script) is placed. If not, run ``/usr/local/bin/counterpartyd`` instead.
+(The above assumes ``/usr/local/bin`` is in your PATH, which is where the ``clearinghoused`` symlink (which just
+points to the ``run.py`` script) is placed. If not, run ``/usr/local/bin/clearinghoused`` instead.
 
-Once you're sure it launches and runs fine, press CTRL-C to exit it, and then run ``counterpartyd`` as a background process via::
+Once you're sure it launches and runs fine, press CTRL-C to exit it, and then run ``clearinghoused`` as a background process via::
 
-    sudo service counterpartyd start
+    sudo service clearinghoused start
 
-You can then open up another command window and run any of ``counterpartyd’s`` other functions, for example::
+You can then open up another command window and run any of ``clearinghoused’s`` other functions, for example::
 
-    counterpartyd send --source=12WQTnVbzhJRswra4TvGxq1RyhUkmiVXXm --destination=1QGZ4sCpvCgRizL5v4NniaKdZKzxBtVN3q --asset=XCP --quantity=5
+    clearinghoused send --source=V2WQTnVbzhJRswra4TvGxq1RyhUkmiVXXm --destination=VQGZ4sCpvCgRizL5v4NniaKdZKzxBtVN3q --asset=XCH --quantity=5
 
-For more examples, see `this link <https://github.com/CounterpartyXCP/counterpartyd#examples>`__.
+For more examples, see `this link <https://github.com/ClearinghouseXCP/clearinghoused#examples>`__.
 
-To run the ``counterpartyd`` testsuite::
+To run the ``clearinghoused`` testsuite::
 
-    counterpartyd tests
+    clearinghoused tests
 
 
 Updating to the newest source
@@ -189,16 +189,16 @@ Updating to the newest source
 
 As the code is enhanced and improved on Github, you can refresh your local copy of the repositories like so::
 
-    cd ~/counterpartyd_build
+    cd ~/clearinghoused_build
     sudo python3 setup.py update
 
-Counterparty for Windows must also be updated from a console window started with elevated privileges.
+Clearinghouse for Windows must also be updated from a console window started with elevated privileges.
 
-If, upon running counterpartyd, you get a missing dependency or some other error, you can always rerun
+If, upon running clearinghoused, you get a missing dependency or some other error, you can always rerun
 ``setup.py``, which will regenerate your dependencies listing to the libraries and versions as listed in
-`pip-requirements.txt <https://github.com/CounterpartyXCP/counterpartyd/blob/master/pip-requirements.txt>`__::
+`pip-requirements.txt <https://github.com/ClearingHouse/clearinghoused/blob/master/pip-requirements.txt>`__::
 
-    cd ~/counterpartyd_build
+    cd ~/clearinghoused_build
     sudo python3 setup.py
 
 The same approach applies to Windows - this operation requires elevation.

@@ -1,5 +1,5 @@
 #!upstart
-description "counterpartyd (testnet)"
+description "clearinghoused (mainnet)"
 limit nofile 16384 16384
 
 # When to start the service
@@ -15,5 +15,5 @@ respawn limit 10 60 # 10 times in 60 seconds
 script
 USER=!RUN_AS_USER!
 USER_HOME=!USER_HOMEDIR!
-start-stop-daemon --start --pidfile $USER_HOME/.config/counterpartyd-testnet/counterpartyd.pid --chuid $USER --exec /usr/local/bin/counterpartyd -- --data-dir=$USER_HOME/.config/counterpartyd-testnet --testnet server
+start-stop-daemon --start --pidfile $USER_HOME/.config/clearinghoused/clearinghoused.pid --chuid $USER --exec /usr/local/bin/clearinghoused -- server
 end script

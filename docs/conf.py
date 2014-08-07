@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Counterparty documentation build configuration file, created by
+# Clearinghouse documentation build configuration file, created by
 # sphinx-quickstart on Mon Dec 16 11:08:37 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'counterpartyd_build'
-copyright = u'2013, Counterparty Team'
+project = u'clearinghoused_build'
+copyright = u'2013, ClearingHouse Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Counterpartydoc'
+htmlhelp_basename = 'Clearinghousedoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,8 +183,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Counterparty.tex', u'counterpartyd_build Documentation',
-   u'Counterparty Team', 'manual'),
+  ('index', 'Clearinghouse.tex', u'clearinghoused_build Documentation',
+   u'ClearingHouse Team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,8 +213,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'counterpartyd_build', u'Counterparty Documentation',
-     [u'Counterparty Team'], 1)
+    ('index', 'clearinghoused_build', u'Clearinghouse Documentation',
+     [u'ClearingHouse Team'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'counterpartyd_build', u'Counterparty Documentation',
-   u'Counterparty Team', 'counterpartyd_build', 'One line description of project.',
+  ('index', 'clearinghoused_build', u'ClearingHouse Documentation',
+   u'ClearingHouse Team', 'clearinghoused_build', 'One line description of project.',
    'Miscellaneous'),
 ]
 

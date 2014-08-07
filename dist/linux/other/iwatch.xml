@@ -23,8 +23,8 @@
   <title>Counterblock-Related</title>
   <contactpoint email="root@localhost" name="Administrator"/>
     <path type="recursive" events="modify">/etc/nginx</path>
-    <path type="recursive" events="modify">/home/xcp/counterpartyd_build</path>
-    <path type="recursive" events="modify">/home/xcp/counterwallet</path>
+    <path type="recursive" events="modify">/home/xch/clearinghoused_build</path>
+    <path type="recursive" events="modify">/home/xch/clearwallet</path>
     <path type="regexception">\.git</path>
     <path type="regexception">.*?\.swp</path>
     <path type="regexception">.*?\.swx</path>

@@ -26,13 +26,13 @@ except ImportError:
     pass
 
 PYTHON3_VER = None
-DEFAULT_CONFIG = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=8332\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=4000\nrpc-user=rpc\nrpc-password=xcppw1234"
-DEFAULT_CONFIG_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=18332\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=14000\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=1"
+DEFAULT_CONFIG = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=4000\nrpc-user=rpc\nrpc-password=xcppw1234"
+DEFAULT_CONFIG_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=25222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=14000\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=1"
 DEFAULT_CONFIG_INSTALLER = "[Default]\nbitcoind-rpc-connect=BITCOIND_RPC_CONNECT\nbitcoind-rpc-port=BITCOIND_RPC_PORT\nbitcoind-rpc-user=BITCOIND_RPC_USER\nbitcoind-rpc-password=BITCOIND_RPC_PASSWORD\nrpc-host=RPC_HOST\nrpc-port=RPC_PORT\nrpc-user=RPC_USER\nrpc-password=RPC_PASSWORD"
 
-DEFAULT_CONFIG_COUNTERWALLETD = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=8332\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\ncounterpartyd-rpc-host=localhost\ncounterpartyd-rpc-port=4000\ncounterpartyd-rpc-user=rpc\ncounterpartyd-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0"
-DEFAULT_CONFIG_COUNTERWALLETD_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=18332\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\ncounterpartyd-rpc-host=localhost\ncounterpartyd-rpc-port=14000\ncounterpartyd-rpc-user=rpc\ncounterpartyd-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0\ntestnet=1"
-DEFAULT_CONFIG_INSTALLER_COUNTERWALLETD = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=8332\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\ncounterpartyd-rpc-host=RPC_HOST\ncounterpartyd-rpc-port=RPC_PORT\ncounterpartyd-rpc-user=RPC_USER\ncounterpartyd-rpc-password=RPC_PASSWORD"
+DEFAULT_CONFIG_COUNTERWALLETD = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nclearinghoused-rpc-host=localhost\nclearinghoused-rpc-port=4000\nclearinghoused-rpc-user=rpc\nclearinghoused-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0"
+DEFAULT_CONFIG_COUNTERWALLETD_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=25222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nclearinghoused-rpc-host=localhost\nclearinghoused-rpc-port=14000\nclearinghoused-rpc-user=rpc\nclearinghoused-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0\ntestnet=1"
+DEFAULT_CONFIG_INSTALLER_COUNTERWALLETD = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nclearinghoused-rpc-host=RPC_HOST\nclearinghoused-rpc-port=RPC_PORT\nclearinghoused-rpc-user=RPC_USER\nclearinghoused-rpc-password=RPC_PASSWORD"
 
 def which(filename):
     """docstring for which"""
@@ -47,7 +47,7 @@ def which(filename):
 def _get_app_cfg_paths(appname, run_as_user):
     import appdirs #installed earlier
     cfg_path = os.path.join(
-        appdirs.user_data_dir(appauthor='Counterparty', appname=appname, roaming=True) \
+        appdirs.user_data_dir(appauthor='ClearingHouse', appname=appname, roaming=True) \
             if os.name == "nt" else ("%s/.config/%s" % (os.path.expanduser("~%s" % run_as_user), appname)), 
         "%s.conf" % appname.replace('-testnet', ''))
     data_dir = os.path.dirname(cfg_path)
@@ -85,12 +85,12 @@ def _rmtree(path):
             rmgeneric(fullpath, f)    
 
 def usage():
-    print("SYNTAX: %s [-h] [--with-counterblockd] [--with-testnet] [--for-user=] [setup|build|update]" % sys.argv[0])
-    print("* The 'setup' command will setup and install counterpartyd as a source installation (including automated setup of its dependencies)")
+    print("SYNTAX: %s [-h] [--with-clearblockd] [--with-testnet] [--for-user=] [setup|build|update]" % sys.argv[0])
+    print("* The 'setup' command will setup and install clearinghoused as a source installation (including automated setup of its dependencies)")
     print("* The 'build' command builds an installer package (Windows only, currently)")
-    print("* The 'update' command updates the git repo for both counterpartyd, counterpartyd_build, and counterblockd (if --with-counterblockd is specified)")
+    print("* The 'update' command updates the git repo for both clearinghoused, clearinghoused_build, and clearblockd (if --with-clearblockd is specified)")
     print("* 'setup' is chosen by default if neither the 'build', 'update', or 'setup' arguments are specified.")
-    print("* If you want to install counterblockd along with counterpartyd, specify the --with-counterblockd option")
+    print("* If you want to install clearblockd along with clearinghoused, specify the --with-clearblockd option")
 
 def runcmd(command, abort_on_failure=True):
     logging.debug("RUNNING COMMAND: %s" % command)
@@ -169,10 +169,10 @@ def get_paths(with_counterblockd):
     #for now, counterblockd currently uses Python 2.7 due to gevent-socketio's lack of support for Python 3
     #because of this, it needs its own virtual environment
     if with_counterblockd:
-        paths['virtualenv_args.counterblockd'] = "--system-site-packages --python=python2.7"
-        paths['env_path.counterblockd'] = os.path.join(paths['base_path'], "env.counterblockd") # home for the virtual environment
-        paths['pip_path.counterblockd'] = os.path.join(paths['env_path.counterblockd'], "Scripts" if os.name == "nt" else "bin", "pip.exe" if os.name == "nt" else "pip")
-        paths['python_path.counterblockd'] = os.path.join(paths['env_path.counterblockd'], "Scripts" if os.name == "nt" else "bin", "python.exe" if os.name == "nt" else "python")
+        paths['virtualenv_args.clearblockd'] = "--system-site-packages --python=python2.7"
+        paths['env_path.clearblockd'] = os.path.join(paths['base_path'], "env.clearblockd") # home for the virtual environment
+        paths['pip_path.clearblockd'] = os.path.join(paths['env_path.clearblockd'], "Scripts" if os.name == "nt" else "bin", "pip.exe" if os.name == "nt" else "pip")
+        paths['python_path.clearblockd'] = os.path.join(paths['env_path.clearblockd'], "Scripts" if os.name == "nt" else "bin", "python.exe" if os.name == "nt" else "python")
     
     return paths
 
@@ -182,23 +182,23 @@ def checkout(paths, run_as_user, with_counterblockd, is_update):
         branch = subprocess.check_output(("cd %s && git rev-parse --abbrev-ref HEAD" % paths['base_path']), shell=True).strip().decode('utf-8')
         assert branch in ("master", "develop") #the two that we support for now
     except:
-        raise Exception("Cannot get current get branch. Please make sure you are running setup.py from your counterpartyd_build directory.")
+        raise Exception("Cannot get current get branch. Please make sure you are running setup.py from your clearinghoused_build directory.")
     
-    logging.info("Checking out/updating counterpartyd:%s from git..." % branch)
-    counterpartyd_path = os.path.join(paths['dist_path'], "counterpartyd")
+    logging.info("Checking out/updating clearinghoused:%s from git..." % branch)
+    counterpartyd_path = os.path.join(paths['dist_path'], "clearinghoused")
     if os.path.exists(counterpartyd_path):
         runcmd("cd \"%s\" && git pull origin %s" % (counterpartyd_path, branch))
     else:
-        runcmd("git clone -b %s https://github.com/CounterpartyXCP/counterpartyd \"%s\"" % (branch, counterpartyd_path))
+        runcmd("git clone -b %s https://github.com/ClearingHouse/clearinghoused \"%s\"" % (branch, counterpartyd_path))
     if os.name != 'nt':
         runcmd("chown -R %s \"%s\"" % (run_as_user, counterpartyd_path))
         
     if with_counterblockd:
-        counterblockd_path = os.path.join(paths['dist_path'], "counterblockd")
+        counterblockd_path = os.path.join(paths['dist_path'], "clearblockd")
         if os.path.exists(counterblockd_path):
             runcmd("cd \"%s\" && git pull origin %s" % (counterblockd_path, branch))
         else:
-            runcmd("git clone -b %s https://github.com/CounterpartyXCP/counterblockd \"%s\"" % (branch, counterblockd_path))
+            runcmd("git clone -b %s https://github.com/ClearingHouse/clearblockd \"%s\"" % (branch, counterblockd_path))
             pass
         if os.name != 'nt':
             runcmd("chown -R %s \"%s\"" % (run_as_user, counterblockd_path))
@@ -206,7 +206,7 @@ def checkout(paths, run_as_user, with_counterblockd, is_update):
     if is_update: #update mode specified... update ourselves (counterpartyd_build) as well
         runcmd("cd \"%s\" && git pull origin %s" % (paths['base_path'], branch))
     
-    sys.path.insert(0, os.path.join(paths['dist_path'], "counterpartyd")) #can now import counterparty modules
+    sys.path.insert(0, os.path.join(paths['dist_path'], "clearinghoused")) #can now import counterparty modules
 
 
 def install_dependencies(paths, with_counterblockd, assume_yes):
@@ -226,7 +226,7 @@ def install_dependencies(paths, with_counterblockd, assume_yes):
                     db_locally = 'y'
                 else:
                     while True:
-                        db_locally = input("counterblockd: Run mongo and redis locally? (y/n): ")
+                        db_locally = input("clearblockd: Run mongo and redis locally? (y/n): ")
                         if db_locally.lower() not in ('y', 'n'):
                             logger.error("Please enter 'y' or 'n'")
                         else:
@@ -310,27 +310,27 @@ def create_virtualenv(paths, with_counterblockd):
         runcmd("%s install -r %s" % (pip_path, os.path.join(paths['dist_path'], reqs_filename)))
 
     create_venv(paths['env_path'], paths['pip_path'], paths['python_path'], paths['virtualenv_args'],
-        os.path.join(paths['dist_path'], "counterpartyd", "pip-requirements.txt")) 
+        os.path.join(paths['dist_path'], "clearinghoused", "pip-requirements.txt"))
     if with_counterblockd: #as counterblockd uses python 2.x, it needs its own virtualenv
-        runcmd("rm -rf %s && mkdir -p %s" % (paths['env_path.counterblockd'], paths['env_path.counterblockd']))
-        create_venv(paths['env_path.counterblockd'], paths['pip_path.counterblockd'], paths['python_path.counterblockd'],
-            paths['virtualenv_args.counterblockd'],
-            os.path.join(paths['dist_path'], "counterblockd", "pip-requirements.txt"), delete_if_exists=False)    
+        runcmd("rm -rf %s && mkdir -p %s" % (paths['env_path.clearblockd'], paths['env_path.clearblockd']))
+        create_venv(paths['env_path.clearblockd'], paths['pip_path.clearblockd'], paths['python_path.clearblockd'],
+            paths['virtualenv_args.clearblockd'],
+            os.path.join(paths['dist_path'], "clearblockd", "pip-requirements.txt"), delete_if_exists=False)
 
 def setup_startup(paths, run_as_user, with_counterblockd, with_testnet, assume_yes):
     if os.name == "posix":
-        runcmd("ln -sf %s/run.py /usr/local/bin/counterpartyd" % paths['base_path'])
+        runcmd("ln -sf %s/run.py /usr/local/bin/clearinghoused" % paths['base_path'])
         if with_counterblockd:
             #make a short script to launch counterblockd
-            f = open("/usr/local/bin/counterblockd", 'w')
-            f.write("#!/bin/sh\n%s/run.py counterblockd \"$@\"" % paths['base_path'])
+            f = open("/usr/local/bin/clearblockd", 'w')
+            f.write("#!/bin/sh\n%s/run.py clearblockd \"$@\"" % paths['base_path'])
             f.close()
-            runcmd("chmod +x /usr/local/bin/counterblockd")
+            runcmd("chmod +x /usr/local/bin/clearblockd")
     elif os.name == "nt":
         #create a batch script
-        batch_contents = "echo off%sREM Launch counterpartyd (source build) under windows%s%s %s %%*" % (
+        batch_contents = "echo off%sREM Launch clearinghoused (source build) under windows%s%s %s %%*" % (
             os.linesep, os.linesep, os.path.join(paths['sys_python_path'], "python.exe"), os.path.join(paths['base_path'], "run.py"))
-        f = open("%s" % os.path.join(os.environ['WINDIR'], "counterpartyd.bat"), "w")
+        f = open("%s" % os.path.join(os.environ['WINDIR'], "clearinghoused.bat"), "w")
         f.write(batch_contents)
         f.close()
 
@@ -338,7 +338,7 @@ def setup_startup(paths, run_as_user, with_counterblockd, with_testnet, assume_y
         start_choice = 'y'
     else:
         while True:
-            start_choice = input("Start counterpartyd automatically on system startup? (y/n): ")
+            start_choice = input("Start clearinghoused automatically on system startup? (y/n): ")
             if start_choice.lower() not in ('y', 'n'):
                 logger.error("Please enter 'y' or 'n'")
             else:
@@ -358,40 +358,40 @@ def setup_startup(paths, run_as_user, with_counterblockd, with_testnet, assume_y
         logging.debug("Installing startup shortcut(s) to '%s'" % buf.value)
         
         ws = win32com.client.Dispatch("wscript.shell")
-        scut = ws.CreateShortcut(os.path.join(buf.value, 'run_counterpartyd.lnk'))
+        scut = ws.CreateShortcut(os.path.join(buf.value, 'run_clearinghoused.lnk'))
         scut.TargetPath = '"c:/Python32/python.exe"'
         scut.Arguments = os.path.join(paths['base_path'], 'run.py') + ' server'
         scut.Save()
         if with_testnet:
             ws = win32com.client.Dispatch("wscript.shell")
-            scut = ws.CreateShortcut(os.path.join(buf.value, 'run_counterpartyd_testnet.lnk' % s))
+            scut = ws.CreateShortcut(os.path.join(buf.value, 'run_clearinghoused_testnet.lnk' % s))
             scut.TargetPath = '"c:/Python32/python.exe"'
             scut.Arguments = os.path.join(paths['base_path'], 'run.py') \
-                + (' --testnet --data-dir="%s" server' % data_dir, _get_app_cfg_paths('counterpartyd-testnet', run_as_user))
+                + (' --testnet --data-dir="%s" server' % data_dir, _get_app_cfg_paths('clearinghoused-testnet', run_as_user))
             scut.Save()
     else:
         logging.info("Setting up init scripts...")
         assert run_as_user
         user_homedir = os.path.expanduser("~" + run_as_user)
-        runcmd("rm -f /etc/init/counterpartyd.conf")
-        runcmd("cp -af %s/linux/init/counterpartyd.conf.template /etc/init/counterpartyd.conf" % paths['dist_path'])
-        runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/counterpartyd.conf" % run_as_user)
-        runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/counterpartyd.conf" % user_homedir.replace('/', '\/'))
+        runcmd("rm -f /etc/init/clearinghoused.conf")
+        runcmd("cp -af %s/linux/init/clearinghoused.conf.template /etc/init/clearinghoused.conf" % paths['dist_path'])
+        runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/clearinghoused.conf" % run_as_user)
+        runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/clearinghoused.conf" % user_homedir.replace('/', '\/'))
         if with_testnet:
-            runcmd("rm -f /etc/init/counterpartyd-testnet.conf")
-            runcmd("cp -af %s/linux/init/counterpartyd-testnet.conf.template /etc/init/counterpartyd-testnet.conf" % paths['dist_path'])
-            runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/counterpartyd-testnet.conf" % run_as_user)
-            runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/counterpartyd-testnet.conf" % user_homedir.replace('/', '\/'))
+            runcmd("rm -f /etc/init/clearinghoused-testnet.conf")
+            runcmd("cp -af %s/linux/init/clearinghoused-testnet.conf.template /etc/init/clearinghoused-testnet.conf" % paths['dist_path'])
+            runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/clearinghoused-testnet.conf" % run_as_user)
+            runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/clearinghoused-testnet.conf" % user_homedir.replace('/', '\/'))
         if with_counterblockd:
-            runcmd("rm -f /etc/init/counterblockd.conf")
-            runcmd("cp -af %s/linux/init/counterblockd.conf.template /etc/init/counterblockd.conf" % paths['dist_path'])
-            runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/counterblockd.conf" % run_as_user)
-            runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/counterblockd.conf" % user_homedir.replace('/', '\/'))
+            runcmd("rm -f /etc/init/clearblockd.conf")
+            runcmd("cp -af %s/linux/init/clearblockd.conf.template /etc/init/clearblockd.conf" % paths['dist_path'])
+            runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/clearblockd.conf" % run_as_user)
+            runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/clearblockd.conf" % user_homedir.replace('/', '\/'))
             if with_testnet:
-                runcmd("rm -f /etc/init/counterblockd-testnet.conf")
-                runcmd("cp -af %s/linux/init/counterblockd-testnet.conf.template /etc/init/counterblockd-testnet.conf" % paths['dist_path'])
-                runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/counterblockd-testnet.conf" % run_as_user)
-                runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/counterblockd-testnet.conf" % user_homedir.replace('/', '\/'))
+                runcmd("rm -f /etc/init/clearblockd-testnet.conf")
+                runcmd("cp -af %s/linux/init/clearblockd-testnet.conf.template /etc/init/clearblockd-testnet.conf" % paths['dist_path'])
+                runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/clearblockd-testnet.conf" % run_as_user)
+                runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/clearblockd-testnet.conf" % user_homedir.replace('/', '\/'))
 
 def create_default_datadir_and_config(paths, run_as_user, with_counterblockd, with_testnet):
     def create_config(appname, default_config):
@@ -428,13 +428,13 @@ def create_default_datadir_and_config(paths, run_as_user, with_counterblockd, wi
         else:
             logging.info("%s config file already exists at: '%s'" % (appname, cfg_path))
     
-    create_config('counterpartyd', DEFAULT_CONFIG)
+    create_config('clearinghoused', DEFAULT_CONFIG)
     if with_testnet:
-        create_config('counterpartyd-testnet', DEFAULT_CONFIG_TESTNET)
+        create_config('clearinghoused-testnet', DEFAULT_CONFIG_TESTNET)
     if with_counterblockd:
-        create_config('counterblockd', DEFAULT_CONFIG_COUNTERWALLETD)
+        create_config('clearblockd', DEFAULT_CONFIG_COUNTERWALLETD)
         if with_testnet:
-            create_config('counterblockd-testnet', DEFAULT_CONFIG_COUNTERWALLETD_TESTNET)
+            create_config('clearblockd-testnet', DEFAULT_CONFIG_COUNTERWALLETD_TESTNET)
 
 def do_build(paths, with_counterblockd):
     #TODO: finish windows build support for counterblockd
@@ -460,11 +460,11 @@ def do_build(paths, with_counterblockd):
     logging.info("Frozen executiable data created in %s" % os.path.join(paths['bin_path'], "build"))
     
     #Add a default config to the build
-    cfg = open(os.path.join(os.path.join(paths['bin_path'], "build"), "counterpartyd.conf.default"), 'w')
+    cfg = open(os.path.join(os.path.join(paths['bin_path'], "build"), "clearinghoused.conf.default"), 'w')
     cfg.write(DEFAULT_CONFIG_INSTALLER)
     cfg.close()
     if with_counterblockd:
-        cfg = open(os.path.join(os.path.join(paths['bin_path'], "build"), "counterblockd.conf.default"), 'w')
+        cfg = open(os.path.join(os.path.join(paths['bin_path'], "build"), "clearblockd.conf.default"), 'w')
         cfg.write(COUNTERWALLETD_DEFAULT_CONFIG_INSTALLER)
         cfg.close()
     
@@ -483,10 +483,10 @@ def do_build(paths, with_counterblockd):
     
     #move created .msi file to the bin dir
     from lib import config #counter party
-    installer_dest = os.path.join(paths['bin_path'], "counterpartyd-v%s-%s_install.exe" % (config.CLIENT_VERSION, arch))
+    installer_dest = os.path.join(paths['bin_path'], "clearinghoused-v%s-%s_install.exe" % (config.CLIENT_VERSION, arch))
     if os.path.exists(installer_dest):
         os.remove(installer_dest)
-    shutil.move(os.path.join(paths['dist_path'], "windows", "counterpartyd_install.exe"), installer_dest)
+    shutil.move(os.path.join(paths['dist_path'], "windows", "clearinghoused_install.exe"), installer_dest)
     logging.info("FINAL installer created as %s" % installer_dest)
 
 def main():
@@ -505,13 +505,13 @@ def main():
     with_testnet = False
     assume_yes = False #headless operation
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hby", ["build", "help", "with-counterblockd", "with-testnet", "for-user="])
+        opts, args = getopt.getopt(sys.argv[1:], "hby", ["build", "help", "with-clearblockd", "with-testnet", "for-user="])
     except getopt.GetoptError as err:
         usage()
         sys.exit(2)
     mode = None
     for o, a in opts:
-        if o in ("--with-counterblockd",):
+        if o in ("--with-clearblockd",):
             with_counterblockd = True
         elif o in ("--with-testnet",):
             with_testnet = True
@@ -549,17 +549,17 @@ def main():
     paths = get_paths(with_counterblockd)
 
     if command == "build": #build counterpartyd installer (currently windows only)
-        logging.info("Building Counterparty...")
+        logging.info("Building ClearingHouse...")
         checkout(paths, run_as_user, with_counterblockd, command == "update")
         install_dependencies(paths, with_counterblockd, assume_yes)
         create_virtualenv(paths, with_counterblockd)
         do_build(paths, with_counterblockd)
     elif command == "update": #auto update from git
-        logging.info("Updating relevant Counterparty repos")
+        logging.info("Updating relevant ClearingHouse repos")
         checkout(paths, run_as_user, with_counterblockd, command == "update")
     else: #setup mode
         assert command == "setup"
-        logging.info("Installing Counterparty from source%s..." % (
+        logging.info("Installing ClearingHouse from source%s..." % (
             (" for user '%s'" % run_as_user) if os.name != "nt" else '',))
         checkout(paths, run_as_user, with_counterblockd, command == "update")
         install_dependencies(paths, with_counterblockd, assume_yes)

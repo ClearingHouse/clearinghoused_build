@@ -30,10 +30,10 @@ try: #ignore import errors on windows
 except ImportError:
     pass
 
-USERNAME = "xcp"
-DAEMON_USERNAME = "xcpd"
-REPO_COUNTERPARTYD_BUILD = "https://github.com/CounterpartyXCP/counterpartyd_build.git"
-REPO_COUNTERWALLET = "https://github.com/CounterpartyXCP/counterwallet.git"
+USERNAME = "xch"
+DAEMON_USERNAME = "xchd"
+REPO_COUNTERPARTYD_BUILD = "https://github.com/ClearingHouse/clearinghoused_build.git"
+REPO_COUNTERWALLET = "https://github.com/ClearingHouse/clearwallet.git"
 
 def pass_generator(size=14, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -71,17 +71,17 @@ def modify_config(param_re, content_to_add, filenames, replace_if_exists=True, d
         f.write(content)
         f.close()
 
-def modify_cp_config(param_re, content_to_add, testnet=True, replace_if_exists=True, config='counterpartyd'):
-    assert config in ('counterpartyd', 'counterblockd', 'both')
+def modify_cp_config(param_re, content_to_add, testnet=True, replace_if_exists=True, config='clearinghoused'):
+    assert config in ('clearinghoused', 'clearblockd', 'both')
     cfg_filenames = []
-    if config in ('counterpartyd', 'both'):
-        cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "counterpartyd", "counterpartyd.conf"))
+    if config in ('clearinghoused', 'both'):
+        cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "clearinghoused", "clearinghoused.conf"))
         if testnet:
-            cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "counterpartyd-testnet", "counterpartyd.conf"))
-    if config in ('counterblockd', 'both'):
-        cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "counterblockd", "counterblockd.conf"))
+            cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "clearinghoused-testnet", "clearinghoused.conf"))
+    if config in ('clearblockd', 'both'):
+        cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "clearblockd", "clearblockd.conf"))
         if testnet:
-            cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "counterblockd-testnet", "counterblockd.conf"))
+            cfg_filenames.append(os.path.join(os.path.expanduser('~'+USERNAME), ".config", "clearblockd-testnet", "clearblockd.conf"))
         
     modify_config(param_re, content_to_add, cfg_filenames, replace_if_exists=replace_if_exists)
 
@@ -128,7 +128,7 @@ def do_prerun_checks():
         sys.exit(1)
     ubuntu_release = platform.linux_distribution()[1]
     if ubuntu_release != "14.04":
-        logging.error("Only Ubuntu 14.04 supported for Counterblock Federated Node install.")
+        logging.error("Only Ubuntu 14.04 supported for Clearblock Federated Node install.")
         sys.exit(1)
     #script must be run as root
     if os.geteuid() != 0:
@@ -172,10 +172,10 @@ def do_base_setup(run_as_user, branch, base_path, dist_path):
     runcmd("adduser %s %s" % (run_as_user, USERNAME))
     
     #Check out counterpartyd-build repo under this user's home dir and use that for the build
-    git_repo_clone(branch, "counterpartyd_build", REPO_COUNTERPARTYD_BUILD, run_as_user)
+    git_repo_clone(branch, "clearinghoused_build", REPO_COUNTERPARTYD_BUILD, run_as_user)
 
     #enhance fd limits for the xcpd user
-    runcmd("cp -af %s/linux/other/xcpd_security_limits.conf /etc/security/limits.d/" % dist_path)
+    runcmd("cp -af %s/linux/other/xchd_security_limits.conf /etc/security/limits.d/" % dist_path)
 
 def do_security_setup(run_as_user, branch, base_path, dist_path):
     """Some helpful security-related tasks, to tighten up the box"""
@@ -192,7 +192,7 @@ def do_security_setup(run_as_user, branch, base_path, dist_path):
 
     #set up fail2ban
     runcmd("apt-get -y install fail2ban")
-    runcmd("install -m 0644 -o root -g root -D %s/linux/other/fail2ban.jail.conf /etc/fail2ban/jail.d/counterblock.conf" % dist_path)
+    runcmd("install -m 0644 -o root -g root -D %s/linux/other/fail2ban.jail.conf /etc/fail2ban/jail.d/clearblock.conf" % dist_path)
     runcmd("service fail2ban restart")
     
     #set up psad
@@ -223,7 +223,7 @@ def do_security_setup(run_as_user, branch, base_path, dist_path):
     #auditd
     #note that auditd will need a reboot to fully apply the rules, due to it operating in "immutable mode" by default
     runcmd("apt-get -y install auditd audispd-plugins")
-    runcmd("install -m 0640 -o root -g root -D %s/linux/other/audit.rules /etc/audit/rules.d/counterblock.rules" % dist_path)
+    runcmd("install -m 0640 -o root -g root -D %s/linux/other/audit.rules /etc/audit/rules.d/clearblock.rules" % dist_path)
     runcmd("service auditd restart")
 
     #iwatch
@@ -240,58 +240,58 @@ def do_bitcoind_setup(run_as_user, branch, base_path, dist_path, run_mode):
     bitcoind_rpc_password_testnet = pass_generator()
     
     #Install bitcoind
-    runcmd("rm -rf /tmp/bitcoind.tar.gz /tmp/bitcoin-0.9.2.1-linux")
-    runcmd("wget -O /tmp/bitcoind.tar.gz https://bitcoin.org/bin/0.9.2.1/bitcoin-0.9.2.1-linux.tar.gz")
-    runcmd("tar -C /tmp -zxvf /tmp/bitcoind.tar.gz")
-    runcmd("cp -af /tmp/bitcoin-0.9.2.1-linux/bin/64/bitcoind /usr/bin")
-    runcmd("cp -af /tmp/bitcoin-0.9.2.1-linux/bin/64/bitcoin-cli /usr/bin")
-    runcmd("rm -rf /tmp/bitcoind.tar.gz /tmp/bitcoin-0.9.2.1-linux")
+    runcmd("rm -rf /tmp/viacoind.tar.gz /tmp/viacoin-0.10.3-linux")
+    runcmd("wget -O /tmp/viacoind.tar.gz https://github.com/viacoin/viacoin/releases/download/v0.10.3/viacoin-0.10.3-linux.tar.gz")
+    runcmd("tar -C /tmp -zxvf /tmp/viacoind.tar.gz")
+    runcmd("cp -af /tmp/viacoin-0.10.3-linux/bin/64/viacoind /usr/local/bin")
+    runcmd("cp -af /tmp/viacoin-0.10.3-linux/bin/64/viacoin-cli /usr/local/bin")
+    runcmd("rm -rf /tmp/viacoind.tar.gz /tmp/viacoin-0.10.3-linux")
 
     #Do basic inital bitcoin config (for both testnet and mainnet)
-    runcmd("mkdir -p ~%s/.bitcoin ~%s/.bitcoin-testnet" % (USERNAME, USERNAME))
-    if not os.path.exists(os.path.join(user_homedir, '.bitcoin', 'bitcoin.conf')):
-        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1" > ~%s/.bitcoin/bitcoin.conf'""" % (
+    runcmd("mkdir -p ~%s/.viacoin ~%s/.viacoin-testnet" % (USERNAME, USERNAME))
+    if not os.path.exists(os.path.join(user_homedir, '.viacoin', 'viacoin.conf')):
+        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1" > ~%s/.viacoin/viacoin.conf'""" % (
             bitcoind_rpc_password, USERNAME))
     else: #grab the existing RPC password
         bitcoind_rpc_password = subprocess.check_output(
-            r"""bash -c "cat ~%s/.bitcoin/bitcoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'" """ % USERNAME, shell=True).strip().decode('utf-8')
-    if not os.path.exists(os.path.join(user_homedir, '.bitcoin-testnet', 'bitcoin.conf')):
-        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1\ntestnet=1" > ~%s/.bitcoin-testnet/bitcoin.conf'""" % (
+            r"""bash -c "cat ~%s/.viacoin/viacoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'" """ % USERNAME, shell=True).strip().decode('utf-8')
+    if not os.path.exists(os.path.join(user_homedir, '.viacoin-testnet', 'viacoin.conf')):
+        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1\ntestnet=1" > ~%s/.viacoin-testnet/viacoin.conf'""" % (
             bitcoind_rpc_password_testnet, USERNAME))
     else:
         bitcoind_rpc_password_testnet = subprocess.check_output(
-            r"""bash -c "cat ~%s/.bitcoin-testnet/bitcoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'" """
+            r"""bash -c "cat ~%s/.viacoin-testnet/viacoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'" """
             % USERNAME, shell=True).strip().decode('utf-8')
     
     #Set up bitcoind startup scripts (will be disabled later from autostarting on system startup if necessary)
-    runcmd("rm -f /etc/init/bitcoin.conf /etc/init/bitcoin-testnet.conf")
-    runcmd("cp -af %s/linux/init/bitcoind.conf.template /etc/init/bitcoind.conf" % dist_path)
-    runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/bitcoind.conf" % DAEMON_USERNAME)
-    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/bitcoind.conf" % user_homedir.replace('/', '\/'))
-    runcmd("cp -af %s/linux/init/bitcoind-testnet.conf.template /etc/init/bitcoind-testnet.conf" % dist_path)
-    runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/bitcoind-testnet.conf" % DAEMON_USERNAME)
-    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/bitcoind-testnet.conf" % user_homedir.replace('/', '\/'))
+    runcmd("rm -f /etc/init/viacoin.conf /etc/init/viacoin-testnet.conf")
+    runcmd("cp -af %s/linux/init/viacoind.conf.template /etc/init/viacoind.conf" % dist_path)
+    runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/viacoind.conf" % DAEMON_USERNAME)
+    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/viacoind.conf" % user_homedir.replace('/', '\/'))
+    runcmd("cp -af %s/linux/init/viacoind-testnet.conf.template /etc/init/viacoind-testnet.conf" % dist_path)
+    runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/viacoind-testnet.conf" % DAEMON_USERNAME)
+    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/viacoind-testnet.conf" % user_homedir.replace('/', '\/'))
     
     #install logrotate file
-    runcmd("cp -af %s/linux/logrotate/bitcoind /etc/logrotate.d/bitcoind" % dist_path)
-    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/logrotate.d/bitcoind" % user_homedir.replace('/', '\/'))
+    runcmd("cp -af %s/linux/logrotate/viacoind /etc/logrotate.d/viacoind" % dist_path)
+    runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/logrotate.d/viacoind" % user_homedir.replace('/', '\/'))
     
     #disable upstart scripts from autostarting on system boot if necessary
     if run_mode == 't': #disable mainnet daemons from autostarting
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/bitcoind.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/viacoind.override" """)
     else:
         runcmd("rm -f /etc/init/bitcoind.override")
     if run_mode == 'm': #disable testnet daemons from autostarting
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/bitcoind-testnet.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/viacoind-testnet.override" """)
     else:
-        runcmd("rm -f /etc/init/bitcoind-testnet.override")
+        runcmd("rm -f /etc/init/viacoind-testnet.override")
         
-    runcmd("chown -R %s:%s ~%s/.bitcoin ~%s/.bitcoin-testnet" % (DAEMON_USERNAME, USERNAME, USERNAME, USERNAME))
+    runcmd("chown -R %s:%s ~%s/.viacoin ~%s/.viacoin-testnet" % (DAEMON_USERNAME, USERNAME, USERNAME, USERNAME))
     
     return bitcoind_rpc_password, bitcoind_rpc_password_testnet
 
 def do_counterparty_setup(run_as_user, branch, base_path, dist_path, run_mode, bitcoind_rpc_password, bitcoind_rpc_password_testnet):
-    """Installs and configures counterpartyd and counterblockd"""
+    """Installs and configures clearinghoused and clearblockd"""
     user_homedir = os.path.expanduser("~" + USERNAME)
     counterpartyd_rpc_password = pass_generator()
     counterpartyd_rpc_password_testnet = pass_generator()
@@ -300,52 +300,52 @@ def do_counterparty_setup(run_as_user, branch, base_path, dist_path, run_mode, b
     # as -y is specified, this will auto install counterblockd full node (mongo and redis) as well as setting
     # counterpartyd/counterblockd to start up at startup for both mainnet and testnet (we will override this as necessary
     # based on run_mode later in this function)
-    runcmd("~%s/counterpartyd_build/setup.py -y --with-counterblockd --with-testnet --for-user=%s" % (USERNAME, USERNAME))
-    runcmd("cd ~%s/counterpartyd_build && git config core.sharedRepository group && find ~%s/counterpartyd_build -type d -print0 | xargs -0 chmod g+s" % (
+    runcmd("~%s/clearinghoused_build/setup.py -y --with-clearblockd --with-testnet --for-user=%s" % (USERNAME, USERNAME))
+    runcmd("cd ~%s/clearinghoused_build && git config core.sharedRepository group && find ~%s/clearinghoused_build -type d -print0 | xargs -0 chmod g+s" % (
         USERNAME, USERNAME)) #to allow for group git actions 
-    runcmd("chown -R %s:%s ~%s/counterpartyd_build" % (USERNAME, USERNAME, USERNAME)) #just in case
-    runcmd("chmod -R u+rw,g+rw,o+r,o-w ~%s/counterpartyd_build" % USERNAME) #just in case
+    runcmd("chown -R %s:%s ~%s/clearinghoused_build" % (USERNAME, USERNAME, USERNAME)) #just in case
+    runcmd("chmod -R u+rw,g+rw,o+r,o-w ~%s/clearinghoused_build" % USERNAME) #just in case
     
     #now change the counterpartyd and counterblockd directories to be owned by the xcpd user (and the xcp group),
     # so that the xcpd account can write to the database, saved image files (counterblockd), log files, etc
-    runcmd("mkdir -p ~%s/.config/counterpartyd ~%s/.config/counterpartyd-testnet ~%s/.config/counterblockd ~%s/.config/counterblockd-testnet" % (
+    runcmd("mkdir -p ~%s/.config/clearinghoused ~%s/.config/clearinghoused-testnet ~%s/.config/clearblockd ~%s/.config/clearblockd-testnet" % (
         USERNAME, USERNAME, USERNAME, USERNAME))    
-    runcmd("chown -R %s:%s ~%s/.config/counterpartyd ~%s/.config/counterpartyd-testnet ~%s/.config/counterblockd ~%s/.config/counterblockd-testnet" % (
+    runcmd("chown -R %s:%s ~%s/.config/clearinghoused ~%s/.config/clearinghoused-testnet ~%s/.config/clearblockd ~%s/.config/clearblockd-testnet" % (
         DAEMON_USERNAME, USERNAME, USERNAME, USERNAME, USERNAME, USERNAME))
-    runcmd("sed -ri \"s/USER=%s/USER=%s/g\" /etc/init/counterpartyd.conf /etc/init/counterpartyd-testnet.conf /etc/init/counterblockd.conf /etc/init/counterblockd-testnet.conf" % (
+    runcmd("sed -ri \"s/USER=%s/USER=%s/g\" /etc/init/clearinghoused.conf /etc/init/clearinghoused-testnet.conf /etc/init/clearblockd.conf /etc/init/clearblockd-testnet.conf" % (
         USERNAME, DAEMON_USERNAME))
 
     #modify the default stored bitcoind passwords in counterpartyd.conf and counterblockd.conf
-    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/counterpartyd/counterpartyd.conf""" % (
+    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/clearinghoused/clearinghoused.conf""" % (
         bitcoind_rpc_password, USERNAME))
-    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/counterpartyd-testnet/counterpartyd.conf""" % (
+    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/clearinghoused-testnet/clearinghoused.conf""" % (
         bitcoind_rpc_password_testnet, USERNAME))
-    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/counterblockd/counterblockd.conf""" % (
+    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/clearblockd/clearblockd.conf""" % (
         bitcoind_rpc_password, USERNAME))
-    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/counterblockd-testnet/counterblockd.conf""" % (
+    runcmd(r"""sed -ri "s/^bitcoind\-rpc\-password=.*?$/bitcoind-rpc-password=%s/g" ~%s/.config/clearblockd-testnet/clearblockd.conf""" % (
         bitcoind_rpc_password_testnet, USERNAME))
     
     #modify the counterpartyd API rpc password in both counterpartyd and counterblockd
-    runcmd(r"""sed -ri "s/^rpc\-password=.*?$/rpc-password=%s/g" ~%s/.config/counterpartyd/counterpartyd.conf""" % (
+    runcmd(r"""sed -ri "s/^rpc\-password=.*?$/rpc-password=%s/g" ~%s/.config/clearinghoused/clearinghoused.conf""" % (
         counterpartyd_rpc_password, USERNAME))
-    runcmd(r"""sed -ri "s/^rpc\-password=.*?$/rpc-password=%s/g" ~%s/.config/counterpartyd-testnet/counterpartyd.conf""" % (
+    runcmd(r"""sed -ri "s/^rpc\-password=.*?$/rpc-password=%s/g" ~%s/.config/clearinghoused-testnet/clearinghoused.conf""" % (
         counterpartyd_rpc_password_testnet, USERNAME))
-    runcmd(r"""sed -ri "s/^counterpartyd\-rpc\-password=.*?$/counterpartyd-rpc-password=%s/g" ~%s/.config/counterblockd/counterblockd.conf""" % (
+    runcmd(r"""sed -ri "s/^clearinghoused\-rpc\-password=.*?$/clearinghoused-rpc-password=%s/g" ~%s/.config/clearblockd/clearblockd.conf""" % (
         counterpartyd_rpc_password, USERNAME))
-    runcmd(r"""sed -ri "s/^counterpartyd\-rpc\-password=.*?$/counterpartyd-rpc-password=%s/g" ~%s/.config/counterblockd-testnet/counterblockd.conf""" % (
+    runcmd(r"""sed -ri "s/^clearinghoused\-rpc\-password=.*?$/clearinghoused-rpc-password=%s/g" ~%s/.config/clearblockd-testnet/clearblockd.conf""" % (
         counterpartyd_rpc_password_testnet, USERNAME))
     
     #disable upstart scripts from autostarting on system boot if necessary
     if run_mode == 't': #disable mainnet daemons from autostarting
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/counterpartyd.override" """)
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/counterblockd.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/clearinghoused.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/clearblockd.override" """)
     else:
-        runcmd("rm -f /etc/init/counterpartyd.override /etc/init/counterblockd.override")
+        runcmd("rm -f /etc/init/clearinghoused.override /etc/init/clearblockd.override")
     if run_mode == 'm': #disable testnet daemons from autostarting
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/counterpartyd-testnet.override" """)
-        runcmd(r"""bash -c "echo 'manual' >> /etc/init/counterblockd-testnet.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/clearinghoused-testnet.override" """)
+        runcmd(r"""bash -c "echo 'manual' >> /etc/init/clearblockd-testnet.override" """)
     else:
-        runcmd("rm -f /etc/init/counterpartyd-testnet.override /etc/init/counterblockd-testnet.override")
+        runcmd("rm -f /etc/init/clearinghoused-testnet.override /etc/init/clearblockd-testnet.override")
 
 def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blockchain_service):
     def do_insight_setup():
@@ -360,8 +360,8 @@ def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blo
         else:
             runcmd("mv %s %s_bkup" % (gypdir, gypdir))
             #^ fix for https://github.com/TooTallNate/node-gyp/issues/363
-        git_repo_clone("master", "insight-api", "https://github.com/bitpay/insight-api.git",
-            run_as_user, hash="c05761b98b70886d0700563628a510f89f87c03e") #insight 0.2.7
+        git_repo_clone("master", "insight-api", "https://github.com/viacoin/insight-api.git",
+            run_as_user, hash="6bf1dfafa819823c74d4128de99a039d32c64845") #insight 0.2.7
         runcmd("rm -rf ~%s/insight-api/node-modules && cd ~%s/insight-api && npm install" % (USERNAME, USERNAME))
         #Set up insight startup scripts (will be disabled later from autostarting on system startup if necessary)
         
@@ -443,10 +443,10 @@ def do_nginx_setup(run_as_user, base_path, dist_path):
 && mkdir -p /tmp/openresty/var/lib/nginx \
 && install -m 0755 -D %s/linux/nginx/nginx.init /tmp/openresty/etc/init.d/nginx \
 && install -m 0755 -D %s/linux/nginx/nginx.conf /tmp/openresty/etc/nginx/nginx.conf \
-&& install -m 0755 -D %s/linux/nginx/counterblock.conf /tmp/openresty/etc/nginx/sites-enabled/counterblock.conf \
-&& install -m 0755 -D %s/linux/nginx/counterblock_api.inc /tmp/openresty/etc/nginx/sites-enabled/counterblock_api.inc \
-&& install -m 0755 -D %s/linux/nginx/counterblock_api_cache.inc /tmp/openresty/etc/nginx/sites-enabled/counterblock_api_cache.inc \
-&& install -m 0755 -D %s/linux/nginx/counterblock_socketio.inc /tmp/openresty/etc/nginx/sites-enabled/counterblock_socketio.inc \
+&& install -m 0755 -D %s/linux/nginx/clearblock.conf /tmp/openresty/etc/nginx/sites-enabled/clearblock.conf \
+&& install -m 0755 -D %s/linux/nginx/clearblock_api.inc /tmp/openresty/etc/nginx/sites-enabled/clearblock_api.inc \
+&& install -m 0755 -D %s/linux/nginx/clearblock_api_cache.inc /tmp/openresty/etc/nginx/sites-enabled/clearblock_api_cache.inc \
+&& install -m 0755 -D %s/linux/nginx/clearblock_socketio.inc /tmp/openresty/etc/nginx/sites-enabled/clearblock_socketio.inc \
 && install -m 0755 -D %s/linux/logrotate/nginx /tmp/openresty/etc/logrotate.d/nginx''' % (
     OPENRESTY_VER, dist_path, dist_path, dist_path, dist_path, dist_path, dist_path, dist_path))
     #package it up using fpm
@@ -459,7 +459,7 @@ def do_nginx_setup(run_as_user, base_path, dist_path):
 -d geoip-database \
 -d libpcre3 \
 --config-files /etc/nginx/nginx.conf \
---config-files /etc/nginx/sites-enabled/counterblock.conf \
+--config-files /etc/nginx/sites-enabled/clearblock.conf \
 --config-files /etc/nginx/fastcgi.conf.default \
 --config-files /etc/nginx/win-utf \
 --config-files /etc/nginx/fastcgi_params \
@@ -498,7 +498,7 @@ def do_armory_utxsvr_setup(run_as_user, base_path, dist_path, run_mode, run_armo
     runcmd("mkdir -p ~%s/.armory" % USERNAME)
     runcmd("chown -R %s:%s ~%s/.armory" % (DAEMON_USERNAME, USERNAME, USERNAME))
     
-    runcmd("sudo ln -sf ~%s/.bitcoin-testnet/testnet3 ~%s/.bitcoin/" % (USERNAME, USERNAME))
+    runcmd("sudo ln -sf ~%s/.viacoin-testnet/testnet3 ~%s/.viacoin/" % (USERNAME, USERNAME))
     #^ ghetto hack, as armory has hardcoded dir settings in certain place
     
     #make a short script to launch armory_utxsvr
@@ -516,10 +516,10 @@ def do_armory_utxsvr_setup(run_as_user, base_path, dist_path, run_mode, run_armo
         runcmd("cp -af %s/linux/init/armory_utxsvr-testnet.conf.template /etc/init/armory_utxsvr-testnet.conf" % dist_path)
         runcmd("sed -ri \"s/\!RUN_AS_USER\!/%s/g\" /etc/init/armory_utxsvr-testnet.conf" % DAEMON_USERNAME)
         runcmd("sed -ri \"s/\!USER_HOMEDIR\!/%s/g\" /etc/init/armory_utxsvr-testnet.conf" % user_homedir.replace('/', '\/'))
-        modify_cp_config(r'^armory\-utxsvr\-enable=.*?$', 'armory-utxsvr-enable=1', config='counterblockd')
+        modify_cp_config(r'^armory\-utxsvr\-enable=.*?$', 'armory-utxsvr-enable=1', config='clearblockd')
     else: #disable
         runcmd("rm -f /etc/init/armory_utxsvr.conf /etc/init/armory_utxsvr-testnet.conf")
-        modify_cp_config(r'^armory\-utxsvr\-enable=.*?$', 'armory-utxsvr-enable=0', config='counterblockd')
+        modify_cp_config(r'^armory\-utxsvr\-enable=.*?$', 'armory-utxsvr-enable=0', config='clearblockd')
 
     #disable upstart scripts from autostarting on system boot if necessary
     if run_mode == 't': #disable mainnet daemons from autostarting
@@ -533,14 +533,14 @@ def do_armory_utxsvr_setup(run_as_user, base_path, dist_path, run_mode, run_armo
 
 def do_counterwallet_setup(run_as_user, branch, updateOnly=False):
     #check out counterwallet from git
-    git_repo_clone(branch, "counterwallet", REPO_COUNTERWALLET, run_as_user)
+    git_repo_clone(branch, "clearwallet", REPO_COUNTERWALLET, run_as_user)
     if not updateOnly:
         runcmd("npm install -g grunt-cli bower")
-    runcmd("cd ~%s/counterwallet/src && bower --allow-root --config.interactive=false install" % USERNAME)
-    runcmd("cd ~%s/counterwallet && npm install" % USERNAME)
-    runcmd("cd ~%s/counterwallet && grunt build" % USERNAME) #will generate the minified site
-    runcmd("chown -R %s:%s ~%s/counterwallet" % (USERNAME, USERNAME, USERNAME)) #just in case
-    runcmd("chmod -R u+rw,g+rw,o+r,o-w ~%s/counterwallet" % USERNAME) #just in case
+    runcmd("cd ~%s/clearwallet/src && bower --allow-root --config.interactive=false install" % USERNAME)
+    runcmd("cd ~%s/clearwallet && npm install" % USERNAME)
+    runcmd("cd ~%s/clearwallet && grunt build" % USERNAME) #will generate the minified site
+    runcmd("chown -R %s:%s ~%s/clearwallet" % (USERNAME, USERNAME, USERNAME)) #just in case
+    runcmd("chmod -R u+rw,g+rw,o+r,o-w ~%s/clearwallet" % USERNAME) #just in case
 
 def do_newrelic_setup(run_as_user, base_path, dist_path, run_mode):
     ##
@@ -597,19 +597,19 @@ def do_newrelic_setup(run_as_user, base_path, dist_path, run_mode):
     #install/setup python agent for both counterpartyd and counterblockd
     #counterpartyd
     runcmd("%s/env/bin/pip install newrelic" % base_path)
-    runcmd("cp -af %s/linux/newrelic/nr_counterpartyd.ini.template /etc/newrelic/nr_counterpartyd.ini" % dist_path)
-    runcmd("sed -ri \"s/\!LICENSE_KEY\!/%s/g\" /etc/newrelic/nr_counterpartyd.ini" % nr_license_key)
-    runcmd("sed -ri \"s/\!HOSTNAME\!/%s/g\" /etc/newrelic/nr_counterpartyd.ini" % nr_hostname)
+    runcmd("cp -af %s/linux/newrelic/nr_clearinghoused.ini.template /etc/newrelic/nr_clearinghoused.ini" % dist_path)
+    runcmd("sed -ri \"s/\!LICENSE_KEY\!/%s/g\" /etc/newrelic/nr_clearinghoused.ini" % nr_license_key)
+    runcmd("sed -ri \"s/\!HOSTNAME\!/%s/g\" /etc/newrelic/nr_clearinghoused.ini" % nr_hostname)
     #counterblockd
-    runcmd("%s/env.counterblockd/bin/pip install newrelic" % base_path)
-    runcmd("cp -af %s/linux/newrelic/nr_counterblockd.ini.template /etc/newrelic/nr_counterblockd.ini" % dist_path)
-    runcmd("sed -ri \"s/\!LICENSE_KEY\!/%s/g\" /etc/newrelic/nr_counterblockd.ini" % nr_license_key)
-    runcmd("sed -ri \"s/\!HOSTNAME\!/%s/g\" /etc/newrelic/nr_counterblockd.ini" % nr_hostname)
+    runcmd("%s/env.clearblockd/bin/pip install newrelic" % base_path)
+    runcmd("cp -af %s/linux/newrelic/nr_clearblockd.ini.template /etc/newrelic/nr_clearblockd.ini" % dist_path)
+    runcmd("sed -ri \"s/\!LICENSE_KEY\!/%s/g\" /etc/newrelic/nr_clearblockd.ini" % nr_license_key)
+    runcmd("sed -ri \"s/\!HOSTNAME\!/%s/g\" /etc/newrelic/nr_clearblockd.ini" % nr_hostname)
     #install init scripts (overwrite the existing ones for now at least)
-    runcmd("cp -af %s/linux/newrelic/init/nr-counterpartyd.conf /etc/init/counterpartyd.conf" % dist_path) #overwrite
-    #runcmd("cp -af %s/linux/newrelic/init/nr-counterblockd.conf /etc/init/counterblockd.conf" % dist_path) #overwrite
-    runcmd("cp -af %s/linux/newrelic/init/nr-counterpartyd-testnet.conf /etc/init/counterpartyd-testnet.conf" % dist_path) #overwrite
-    #runcmd("cp -af %s/linux/newrelic/init/nr-counterblockd-testnet.conf /etc/init/counterblockd-testnet.conf" % dist_path) #overwrite
+    runcmd("cp -af %s/linux/newrelic/init/nr-clearinghoused.conf /etc/init/clearinghoused.conf" % dist_path) #overwrite
+    #runcmd("cp -af %s/linux/newrelic/init/nr-clearblockd.conf /etc/init/clearblockd.conf" % dist_path) #overwrite
+    runcmd("cp -af %s/linux/newrelic/init/nr-clearinghoused-testnet.conf /etc/init/clearinghoused-testnet.conf" % dist_path) #overwrite
+    #runcmd("cp -af %s/linux/newrelic/init/nr-clearblockd-testnet.conf /etc/init/clearblockd-testnet.conf" % dist_path) #overwrite
     #upstart enablement (overrides) should be fine as established in do_counterparty_setup...
 
     #install/setup server agent
@@ -656,31 +656,31 @@ def command_services(command, prompt=False):
     #restart/shutdown services if they may be running on the box
     if os.path.exists("/etc/init.d/iwatch"):
         runcmd("service iwatch %s" % command, abort_on_failure=False)
-    if os.path.exists("/etc/init/counterpartyd.conf"):
+    if os.path.exists("/etc/init/clearinghoused.conf"):
         logging.warn("STOPPING SERVICES" if command == 'stop' else "RESTARTING SERVICES")
-        runcmd("service bitcoind %s" % command, abort_on_failure=False)
-        runcmd("service bitcoind-testnet %s" % command, abort_on_failure=False)
+        runcmd("service viacoind %s" % command, abort_on_failure=False)
+        runcmd("service viacoind-testnet %s" % command, abort_on_failure=False)
         
         if os.path.exists("/etc/init/insight.conf"):
             if command == "restart":
-                logging.info("Waiting 45 seconds before starting insight, to allow bitcoind to fully initialize...")
+                logging.info("Waiting 45 seconds before starting insight, to allow viacoind to fully initialize...")
                 time.sleep(45)
             runcmd("service insight %s" % command, abort_on_failure=False)
             runcmd("service insight-testnet %s" % command, abort_on_failure=False)
         
-        runcmd("service counterpartyd %s" % command, abort_on_failure=False)
-        runcmd("service counterpartyd-testnet %s" % command, abort_on_failure=False)
-        runcmd("service counterblockd %s" % command, abort_on_failure=False)
-        runcmd("service counterblockd-testnet %s" % command, abort_on_failure=False)
+        runcmd("service clearinghoused %s" % command, abort_on_failure=False)
+        runcmd("service clearinghoused-testnet %s" % command, abort_on_failure=False)
+        runcmd("service clearblockd %s" % command, abort_on_failure=False)
+        runcmd("service clearblockd-testnet %s" % command, abort_on_failure=False)
         if os.path.exists("/etc/init/armory_utxsvr.conf"):
             runcmd("service armory_utxsvr %s" % command, abort_on_failure=False)
             runcmd("service armory_utxsvr-testnet %s" % command, abort_on_failure=False)
         return True
 
 def gather_build_questions():
-    role = ask_question("Build (C)ounterwallet server, (v)ending machine, or (b)lockexplorer server? (C/v/b)", ('c', 'v', 'b'), 'c')
-    print("Building a %s" % ('counterwallet server' if role == 'c' else ('vending machine' if role == 'v' else 'blockexplorer server')))
-    if role == 'c': role = 'counterwallet'
+    role = ask_question("Build (C)learwallet server, (v)ending machine, or (b)lockexplorer server? (C/v/b)", ('c', 'v', 'b'), 'c')
+    print("Building a %s" % ('clearwallet server' if role == 'c' else ('vending machine' if role == 'v' else 'blockexplorer server')))
+    if role == 'c': role = 'clearwallet'
     elif role == 'v': role = 'vendingmachine'
     elif role == 'b': role = 'blockexplorer'
     
@@ -698,8 +698,8 @@ def gather_build_questions():
     blockchain_service = ask_question("Blockchain services, use (B)lockr.io (remote) or (i)nsight (local)? (B/i)", ('b', 'i'), 'b')
     print("\tUsing %s" % ('blockr.io' if blockchain_service == 'b' else 'insight'))
 
-    if role == 'counterwallet':
-        run_armory_utxsvr = ask_question("Run armory_utxsvr for allowing offline armory tx creation in counterwallet? (Y/n)", ('y', 'n'), 'y')
+    if role == 'clearwallet':
+        run_armory_utxsvr = ask_question("Run armory_utxsvr for allowing offline armory tx creation in clearwallet? (Y/n)", ('y', 'n'), 'y')
     else:
         run_armory_utxsvr = None
 
@@ -727,7 +727,7 @@ def main():
         else:
             assert False, "Unhandled or unimplemented switch or option"
 
-    base_path = os.path.expanduser("~%s/counterpartyd_build" % USERNAME)
+    base_path = os.path.expanduser("~%s/clearinghoused_build" % USERNAME)
     dist_path = os.path.join(base_path, "dist")
 
     #Detect if we should ask the user if they just want to update the source and not do a rebuild
@@ -743,11 +743,11 @@ def main():
         if os.path.exists("/etc/init.d/iwatch"):
             runcmd("service iwatch stop", abort_on_failure=False)
         #refresh counterpartyd_build
-        git_repo_clone("AUTO", "counterpartyd_build", REPO_COUNTERPARTYD_BUILD, run_as_user)
+        git_repo_clone("AUTO", "clearinghoused_build", REPO_COUNTERPARTYD_BUILD, run_as_user)
         #refresh counterpartyd and counterblockd
-        runcmd("%s/setup.py --with-counterblockd --for-user=xcp update" % base_path)
+        runcmd("%s/setup.py --with-clearblockd --for-user=xch update" % base_path)
         #refresh counterwallet
-        assert(os.path.exists(os.path.expanduser("~%s/counterwallet" % USERNAME)))
+        assert(os.path.exists(os.path.expanduser("~%s/clearwallet" % USERNAME)))
         do_counterwallet_setup(run_as_user, "AUTO", updateOnly=True)
         #offer to restart services
         restarted = command_services("restart", prompt=True)
@@ -771,7 +771,7 @@ def main():
     
     do_nginx_setup(run_as_user, base_path, dist_path)
     
-    if role == 'counterwallet':
+    if role == 'clearwallet':
         do_armory_utxsvr_setup(run_as_user, base_path, dist_path, run_mode, run_armory_utxsvr)
         do_counterwallet_setup(run_as_user, branch)
 
@@ -780,7 +780,7 @@ def main():
     if security_hardening:
         do_security_setup(run_as_user, branch, base_path, dist_path)
     
-    logging.info("Counterblock Federated Node Build Complete (whew).")
+    logging.info("Clearblock Federated Node Build Complete (whew).")
     command_services("restart", prompt=True)
 
 

@@ -1,10 +1,10 @@
 #!/bin/sh
 
-sudo service bitcoind stop
-sudo service bitcoind-testnet stop
+sudo service viacoind stop
+sudo service viacoind-testnet stop
 sudo service insight stop
 sudo service insight-testnet stop
-sudo service counterpartyd stop
-sudo service counterpartyd-testnet stop
-sudo service counterblockd stop
-sudo service counterblockd-testnet stop
+sudo service clearinghoused stop
+sudo service clearinghoused-testnet stop
+sudo service clearblockd stop
+sudo service clearblockd-testnet stop
