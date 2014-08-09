@@ -131,7 +131,7 @@ Node Setup
 Once the server is provisioned and set up as above, you will need to install all of the necessary software and dependencies. We have an
 installation script for this, that is fully automated **and installs ALL dependencies, including ``viacoind`` and ``insight``**::
 
-    cd && wget -qO setup_federated_node.py https://raw.github.com/ClearinghouseXCP/clearinghoused_build/master/setup_federated_node.py
+    cd && wget -qO setup_federated_node.py https://raw.github.com/Clearinghousexch/clearinghoused_build/master/setup_federated_node.py
     sudo python3 setup_federated_node.py
 
 Then just follow the on-screen prompts (choosing to build from *master* if you are building a production node,
@@ -142,7 +142,7 @@ Once done, start up ``viacoind`` daemon(s)::
     sudo service viacoind start
     sudo service viacoind-testnet start
     
-    sudo tail -f ~xcp/.viacoin/debug.log 
+    sudo tail -f ~xch/.viacoin/debug.log 
 
 That last command will give you information on the Viacoin blockchain download status. After the blockchain starts
 downloading, **if you've elected to install and use** ``insight``, you can launch the ``insight`` daemon(s)::
@@ -150,21 +150,21 @@ downloading, **if you've elected to install and use** ``insight``, you can launc
     sudo service insight start
     sudo service insight-testnet start
     
-    sudo tail -f ~xcp/insight-api/insight.log 
+    sudo tail -f ~xch/insight-api/insight.log 
 
 As well as ``armory_utxsvr``, if you're using that (Clearwallet role only)::
 
     sudo service armory_utxsvr start
     sudo service armory_utxsvr-testnet start
     
-    sudo tail -f ~xcp/.config/armory/armory_utxsvr.log
+    sudo tail -f ~xch/.config/armory/armory_utxsvr.log
 
 And ``clearinghoused`` itself::
 
     sudo service clearinghoused start
     sudo service clearinghoused-testnet start
     
-    sudo tail -f ~xcp/.config/clearinghoused/clearinghoused.log
+    sudo tail -f ~xch/.config/clearinghoused/clearinghoused.log
 
 Then, watching these log, wait for the insight sync (as well as the viacoind sync and clearinghoused syncs) to finish,
 which should take between 7 and 12 hours. After this is all done, reboot the box for the new services to
@@ -174,7 +174,7 @@ start (which includes both ``clearinghoused`` and ``clearblockd``).
 process will take between 20 minutes to 1 hour most likely. You can check on the status of ``clearblockd``'s
 sync using::
 
-    sudo tail -f ~xcp/.config/clearblockd/clearblockd.log
+    sudo tail -f ~xch/.config/clearblockd/clearblockd.log
 
 Once it is fully synced up, you should be good to proceed. The next step is to simply open up a web browser, and
 go to the IP address/hostname of the server. You will then be presented to accept your self-signed SSL certificate, and
@@ -212,16 +212,16 @@ Troubleshooting
 If you experience issues with your Clearblock Federated Node, a good start is to check out the logs. Something like the following should work::
 
     #mainnet
-    sudo tail -f ~xcp/.config/clearinghoused/clearinghoused.log
-    sudo tail -f ~xcp/.config/clearblockd/countewalletd.log
-    sudo tail -f ~xcp/.config/clearinghoused/api.error.log
-    sudo tail -f ~xcp/.config/clearblockd/api.error.log
+    sudo tail -f ~xch/.config/clearinghoused/clearinghoused.log
+    sudo tail -f ~xch/.config/clearblockd/countewalletd.log
+    sudo tail -f ~xch/.config/clearinghoused/api.error.log
+    sudo tail -f ~xch/.config/clearblockd/api.error.log
 
     #testnet
-    sudo tail -f ~xcp/.config/clearinghoused-testnet/clearinghoused.log
-    sudo tail -f ~xcp/.config/clearblockd-testnet/clearblockd.log
-    sudo tail -f ~xcp/.config/clearinghoused-testnet/api.error.log
-    sudo tail -f ~xcp/.config/clearblockd-testnet/api.error.log
+    sudo tail -f ~xch/.config/clearinghoused-testnet/clearinghoused.log
+    sudo tail -f ~xch/.config/clearblockd-testnet/clearblockd.log
+    sudo tail -f ~xch/.config/clearinghoused-testnet/api.error.log
+    sudo tail -f ~xch/.config/clearblockd-testnet/api.error.log
     
     #relevant nginx logs
     sudo tail -f /var/log/nginx/clearblock.access.log
@@ -234,24 +234,24 @@ status of ``clearinghoused``/``clearblockd``.
 Also, you can start up the daemons in the foreground, for easier debugging, using the following sets of commands::
 
     #viacoind
-    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xcp/.viacoin' xcpd
-    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xcp/.viacoin-testnet' xcpd
+    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xch/.viacoin' xchd
+    sudo su -s /bin/bash -c 'viacoind -datadir=/home/xch/.viacoin-testnet' xchd
 
     #clearinghoused & clearblockd mainnet
-    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xcp/.config/clearinghoused' xcpd
-    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xcp/.config/clearblockd -v' xcpd
+    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xch/.config/clearinghoused' xchd
+    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xch/.config/clearblockd -v' xchd
     
     #clearinghoused & clearblockd testnet
-    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xcp/.config/clearinghoused-testnet --testnet' xcpd
-    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xcp/.config/clearblockd-testnet --testnet -v' xcpd
+    sudo su -s /bin/bash -c 'clearinghoused --data-dir=/home/xch/.config/clearinghoused-testnet --testnet' xchd
+    sudo su -s /bin/bash -c 'clearblockd --data-dir=/home/xch/.config/clearblockd-testnet --testnet -v' xchd
 
 You can also run ``viacoind`` commands directly, e.g.::
 
     #mainnet
-    sudo su - xcpd -s /bin/bash -c "viacoind -datadir=/home/xcp/.viacoin getinfo"
+    sudo su - xchd -s /bin/bash -c "viacoind -datadir=/home/xch/.viacoin getinfo"
     
     #testnet
-    sudo su - xcpd -s /bin/bash -c "viacoind -datadir=/home/xcp/.viacoin-testnet getinfo"
+    sudo su - xchd -s /bin/bash -c "viacoind -datadir=/home/xch/.viacoin-testnet getinfo"
 
 
 Monitoring the Server
@@ -287,19 +287,19 @@ Other Topics
 User Configuration
 ^^^^^^^^^^^^^^^^^^^^
 
-Note that when you set up a federated node, the script creates two new users on the system: ``xcp`` and ``xcpd``. (The
-``xcp`` user also has an ``xcp`` group created for it as well.)
+Note that when you set up a federated node, the script creates two new users on the system: ``xch`` and ``xchd``. (The
+``xch`` user also has an ``xch`` group created for it as well.)
 
-The script installs ``clearinghoused``, ``clearwallet``, etc into the home directory of the ``xcp`` user. This
+The script installs ``clearinghoused``, ``clearwallet``, etc into the home directory of the ``xch`` user. This
 user also owns all installed files. However, the daemons (i.e. ``viacoind``, ``insight``, ``clearinghoused``,
-``clearblockd``, and ``nginx``) are actually run as the ``xcpd`` user, which has no write access to the files
+``clearblockd``, and ``nginx``) are actually run as the ``xchd`` user, which has no write access to the files
 such as the ``clearwallet`` and ``clearinghoused`` source code files. The reason things are set up like this is so that
 even if there is a horrible bug in one of the products that allows for a RCE (or Remote Control Exploit), where the attacker
 would essentially be able to gain the ability to execute commands on the system as that user, two things should prevent this:
 
-* The ``xcpd`` user doesn't actually have write access to any sensitive files on the server (beyond the log and database
+* The ``xchd`` user doesn't actually have write access to any sensitive files on the server (beyond the log and database
   files for ``viacoind``, ``clearinghoused``, etc.)
-* The ``xcpd`` user uses ``/bin/false`` as its shell, which prevents the attacker from gaining shell-level access
+* The ``xchd`` user uses ``/bin/false`` as its shell, which prevents the attacker from gaining shell-level access
 
 This setup is such to minimize (and hopefully eliminate) the impact from any kind of potential system-level exploit.
 
@@ -308,7 +308,7 @@ Easy Updating
 
 To update the system with new code releases, you simply need to rerun the ``setup_federated_node`` script, like so::
 
-    cd ~xcp/clearinghoused_build
+    cd ~xch/clearinghoused_build
     sudo ./setup_federated_node.py
     
 As prompted, you should be able to choose just to update from git ("G"), instead of to rebuild. However, you would choose the rebuild
@@ -411,14 +411,14 @@ on the user's behalf. Moreover, the option always exists to move all read-querie
 **multiAPIConsensus for Action/Write (``create_``) Operations**
 
 Based on this multiAPI capability, the wallet itself consults more than one of these Federated Nodes via consensus especially
-for all ``create_``-type operations. For example, if you send XCP, clearinghoused on each server is still composing and sending
+for all ``create_``-type operations. For example, if you send xch, clearinghoused on each server is still composing and sending
 back the unsigned raw transaction, but for data security, it compares the results returned from all servers, and will 
 only sign and broadcast (both client-side) if all the results match). This is known as *multiAPIConsensus*.
 
 The ultimate goal here is to have a federated net of semi-trusted backend servers not tied to any one country, provider, network or
 operator/admin. Through requiring consensus on the unsigned transactions returned for all ``create_`` operations, 'semi-trust'
 on a single server basis leads to an overall trustworthy network. Worst case, if backend server is hacked and owned
-(and the clearinghoused code modified), then you may get some invalid read results, but it won't be rewriting your XCP send
+(and the clearinghoused code modified), then you may get some invalid read results, but it won't be rewriting your xch send
 destination address, for example. The attackers would have to hack the code on every single server in the same exact
 way, undetected, to do that.
 

@@ -139,7 +139,7 @@ def do_prerun_checks():
         sys.exit(1)
 
 def do_base_setup(run_as_user, branch, base_path, dist_path):
-    """This creates the xcp and xcpd users and checks out the counterpartyd_build system from git"""
+    """This creates the xch and xchd users and checks out the counterpartyd_build system from git"""
     #change time to UTC
     runcmd("ln -sf /usr/share/zoneinfo/UTC /etc/localtime")
 

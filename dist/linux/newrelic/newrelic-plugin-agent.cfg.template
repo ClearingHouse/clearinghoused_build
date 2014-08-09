@@ -29,7 +29,7 @@ Application:
       db_count: 2
 
 Daemon:
-  user: xcpd
+  user: xchd
   pidfile: /var/run/newrelic/newrelic-plugin-agent.pid
 
 Logging:
