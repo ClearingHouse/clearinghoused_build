@@ -155,7 +155,7 @@ Function nsGetCounterpartydConfigSettings
   ${NSD_CreateText} 36u 24u 100% 12u "localhost"
   Pop $txtXCPHostname
 
-  ${NSD_CreateText} 36u 36u 100% 12u "4000"
+  ${NSD_CreateText} 36u 36u 100% 12u "7300"
   Pop $txtXCPPort
 
   ${NSD_CreateText} 36u 48u 100% 12u "clearinghouserpc"

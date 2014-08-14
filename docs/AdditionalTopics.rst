@@ -42,10 +42,10 @@ options that tell ``clearinghoused`` where and how to connect to your ``viacoind
 
 After running the ``setup.py`` script to create this file, you'll probably need to edit it and tweak the settings
 to match your exact ``viacoind`` configuration (e.g. especially ``rpc-password``). Note that the above config
-connects to ``viacoind`` on mainnet (port 8332).
+connects to ``viacoind`` on mainnet (port 5222).
 
 Note that also, with the config above, it will set up ``clearinghoused`` to listen on localhost (127.0.0.1)
-on port 4000 (if on mainnet) or port 14000 (if on testnet) for API connections (these are the default ports,
+on port 7300 (if on mainnet) or port 17300 (if on testnet) for API connections (these are the default ports,
 and can be changed by specifying the ``rpc-host`` and/or ``rpc-port`` parameters).
 
 
