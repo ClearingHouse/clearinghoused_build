@@ -19,7 +19,8 @@ chown -R $USER $USER_HOME/insight-api
 export INSIGHT_NETWORK=testnet
 export INSIGHT_DB=$USER_HOME/insight-api/db
 #export INSIGHT_IGNORE_CACHE=1
-export BITCOIND_DATADIR=$USER_HOME/.viacoin-testnet/
+#export BITCOIND_DATADIR=$USER_HOME/.viacoin-testnet/
+export BITCOIND_DATADIR=/dev/null
 export BITCOIND_USER=`cat $USER_HOME/.viacoin-testnet/viacoin.conf | sed -n 's/.*rpcuser=\([^ \n]*\).*/\1/p'`
 export BITCOIND_PASS=`cat $USER_HOME/.viacoin-testnet/viacoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'`
 #BITCOIND_HOST -- use the default (localhost)

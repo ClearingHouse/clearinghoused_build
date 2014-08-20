@@ -250,13 +250,13 @@ def do_bitcoind_setup(run_as_user, branch, base_path, dist_path, run_mode):
     #Do basic inital bitcoin config (for both testnet and mainnet)
     runcmd("mkdir -p ~%s/.viacoin ~%s/.viacoin-testnet" % (USERNAME, USERNAME))
     if not os.path.exists(os.path.join(user_homedir, '.viacoin', 'viacoin.conf')):
-        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1" > ~%s/.viacoin/viacoin.conf'""" % (
+        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1\nrpcthreads=1000\nrpctimeout=300" > ~%s/.viacoin/viacoin.conf'""" % (
             bitcoind_rpc_password, USERNAME))
     else: #grab the existing RPC password
         bitcoind_rpc_password = subprocess.check_output(
             r"""bash -c "cat ~%s/.viacoin/viacoin.conf | sed -n 's/.*rpcpassword=\([^ \n]*\).*/\1/p'" """ % USERNAME, shell=True).strip().decode('utf-8')
     if not os.path.exists(os.path.join(user_homedir, '.viacoin-testnet', 'viacoin.conf')):
-        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1\ntestnet=1" > ~%s/.viacoin-testnet/viacoin.conf'""" % (
+        runcmd(r"""bash -c 'echo -e "rpcuser=rpc\nrpcpassword=%s\nserver=1\ndaemon=1\ntxindex=1\ntestnet=1\nrpcthreads=1000\nrpctimeout=300" > ~%s/.viacoin-testnet/viacoin.conf'""" % (
             bitcoind_rpc_password_testnet, USERNAME))
     else:
         bitcoind_rpc_password_testnet = subprocess.check_output(
