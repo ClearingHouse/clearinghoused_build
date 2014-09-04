@@ -26,8 +26,8 @@ except ImportError:
     pass
 
 PYTHON3_VER = None
-DEFAULT_CONFIG = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=7300\nrpc-user=rpc\nrpc-password=xcppw1234"
-DEFAULT_CONFIG_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=25222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=17300\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=1"
+DEFAULT_CONFIG = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=7300\nrpc-user=rpc\nrpc-password=xcppw1234\ninsight-enable=0\nblockchain-service-name=addrindex"
+DEFAULT_CONFIG_TESTNET = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=25222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nrpc-host=localhost\nrpc-port=17300\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=0\nblockchain-service-name=addrindex"
 DEFAULT_CONFIG_INSTALLER = "[Default]\nbitcoind-rpc-connect=BITCOIND_RPC_CONNECT\nbitcoind-rpc-port=BITCOIND_RPC_PORT\nbitcoind-rpc-user=BITCOIND_RPC_USER\nbitcoind-rpc-password=BITCOIND_RPC_PASSWORD\nrpc-host=RPC_HOST\nrpc-port=RPC_PORT\nrpc-user=RPC_USER\nrpc-password=RPC_PASSWORD"
 
 DEFAULT_CONFIG_COUNTERWALLETD = "[Default]\nbitcoind-rpc-connect=localhost\nbitcoind-rpc-port=5222\nbitcoind-rpc-user=rpc\nbitcoind-rpc-password=rpcpw1234\nclearinghoused-rpc-host=localhost\nclearinghoused-rpc-port=7300\nclearinghoused-rpc-user=rpc\nclearinghoused-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nrpc-port=7310\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0"
