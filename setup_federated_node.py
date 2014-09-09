@@ -359,7 +359,7 @@ bitcoind_rpc_password_testnet, clearinghoused_public, clearwallet_support_email)
     
         #modify the counterpartyd API rpc password in counterblockd.conf
         modify_cp_config(r'^clearinghoused\-rpc\-password=.*?$',
-            'clearinghoused-rpc-password=%s' % counterpartyd_rpc_password, config='counterblockd', net='mainnet')
+            'clearinghoused-rpc-password=%s' % counterpartyd_rpc_password, config='clearblockd', net='mainnet')
         modify_cp_config(r'^clearinghoused\-rpc\-password=.*?$',
             'clearinghoused-rpc-password=%s' % counterpartyd_rpc_password_testnet, config='clearblockd', net='testnet')
         
@@ -705,7 +705,7 @@ def command_services(command, prompt=False):
 
 QUESTION_FLAGS = collections.OrderedDict({
     "op": ('u', 'r'),
-    "role": ('clearrwallet', 'vendingmachine', 'blockexplorer', 'clearinghoused_only', 'btcpayescrow'),
+    "role": ('clearwallet', 'vendingmachine', 'blockexplorer', 'clearinghoused_only', 'btcpayescrow'),
     "branch": ('master', 'develop'),
     "run_mode": ('t', 'm', 'b'),
     "blockchain_service": ('b', 'i'),
@@ -722,8 +722,8 @@ def gather_build_questions(answered_questions):
                 + "Your choice",
             ('1', '2', '3', '4', '5'), '1')
         if role == '1':
-            role = 'counterwallet'
-            role_desc = "Counterwallet server"
+            role = 'clearwallet'
+            role_desc = "Clearwallet server"
         elif role == '2':
             role = 'vendingmachine'
             role_desc = "Vending machine/gateway"
