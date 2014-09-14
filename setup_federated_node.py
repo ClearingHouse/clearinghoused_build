@@ -382,7 +382,7 @@ bitcoind_rpc_password_testnet, clearinghoused_public, clearwallet_support_email)
         else:
             runcmd("rm -f /etc/init/clearblockd-testnet.override")
 
-def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blockchain_service):
+def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blockchain_service, bitcoin_rpc_password, bitcoin_rpc_password_testnet):
     def do_insight_setup():
         """This installs and configures insight"""
         assert blockchain_service
@@ -420,7 +420,13 @@ def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blo
         
     def do_blockr_setup():
         modify_cp_config(r'^blockchain\-service\-name=.*?$', 'blockchain-service-name=blockr', config='both')
-    
+
+    def do_addrindex_setup():
+        modify_cp_config(r'^insight\-enable=.*?$', 'insight-enable=0', config='both')
+        modify_cp_config(r'^blockchain\-service\-name=.*?$', 'blockchain-service-name=addrindex', config='both')
+        modify_cp_config(r'^blockchain\-service\-connect=.*?$', 'blockchain-service-connect=http://rpc:%s@localhost:5222' % bitcoin_rpc_password, config='clearblockd', net='mainnet')
+        modify_cp_config(r'^blockchain\-service\-connect=.*?$', 'blockchain-service-connect=http://rpc:%s@localhost:25222' % bitcoin_rpc_password_testne, config='clearblockd', net='testnet')
+
     #disable upstart scripts from autostarting on system boot if necessary
     if blockchain_service == 'i':
         do_insight_setup()
@@ -432,6 +438,9 @@ def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blo
             runcmd(r"""bash -c "echo 'manual' >> /etc/init/insight-testnet.override" """)
         else:
             runcmd("rm -f /etc/init/insight-testnet.override")
+    if blockchain_service == 'a':
+        runcmd("rm -f /etc/init/insight.override /etc/init/insight-testnet.override")
+        do_addrindex_setup()
     else: #insight not being used as blockchain service
         runcmd("rm -f /etc/init/insight.override /etc/init/insight-testnet.override")
         #^ so insight doesn't start if it was in use before
@@ -708,7 +717,7 @@ QUESTION_FLAGS = collections.OrderedDict({
     "role": ('clearwallet', 'vendingmachine', 'blockexplorer', 'clearinghoused_only', 'btcpayescrow'),
     "branch": ('master', 'develop'),
     "run_mode": ('t', 'm', 'b'),
-    "blockchain_service": ('b', 'i'),
+    "blockchain_service": ('b', 'i', 'a'),
     "security_hardening": ('y', 'n'),
     "clearinghoused_public": ('y', 'n'),
     "clearwallet_support_email": None
@@ -718,7 +727,7 @@ def gather_build_questions(answered_questions):
     if 'role' not in answered_questions:
         role = ask_question("Enter the number for the role you want to build:\n"
                 + "\t1: Clearwallet server\n\t2: Vending machine\n\t3: Blockexplorer server\n"
-                + "\t4: clearinghoused-only\n\t5: BTCPay Escrow Server\n"
+                + "\t4: clearinghoused-only\n\t5: VIAPay Escrow Server\n"
                 + "Your choice",
             ('1', '2', '3', '4', '5'), '1')
         if role == '1':
@@ -757,10 +766,16 @@ def gather_build_questions(answered_questions):
     assert answered_questions['run_mode'] in QUESTION_FLAGS['run_mode']
 
     if 'blockchain_service' not in answered_questions:
-        answered_questions['blockchain_service'] = ask_question("Blockchain services, use (B)lockr.io (remote) or (i)nsight (local)? (B/i)", ('b', 'i'), 'b')
-        print("\tUsing %s" % ('blockr.io' if answered_questions['blockchain_service'] == 'b' else 'insight'))
+        answered_questions['blockchain_service'] = ask_question("Blockchain services, use (B)lockr.io (remote), (i)nsight (local), (a)ddrindex? (B/i/a)", ('b', 'i', 'a'), 'a')
+        if answered_questions['blockchain_service'] == 'b':
+            answer = 'blockr.io'
+        elif answered_questions['blockchain_service'] == 'a':
+            answer = 'addrindex'
+        else:
+            answer = 'insight'
+        print("\tUsing %s" % answer)
     assert answered_questions['blockchain_service'] in QUESTION_FLAGS['blockchain_service']
-    
+
     if role == 'clearinghoused_only' and 'clearinghoused_public' not in answered_questions:
         answered_questions['clearinghoused_public'] = ask_question(
             "Enable public Clearinghoused setup (listen on all hosts w/ rpc/1234 user) (Y/n)", ('y', 'n'), 'y')
@@ -775,7 +790,7 @@ def gather_build_questions(answered_questions):
             counterwallet_support_email = counterwallet_support_email.strip()
             if counterwallet_support_email:
                 counterwallet_support_email_confirm = ask_question(
-                    "You entererd '%s', is that right? (Y/n): " % counterwallet_support_email, ('y', 'n'), 'y') 
+                    "You entered '%s', is that right? (Y/n): " % counterwallet_support_email, ('y', 'n'), 'y')
                 if counterwallet_support_email_confirm == 'y': break
             else: break
         answered_questions['clearwallet_support_email'] = counterwallet_support_email
@@ -834,7 +849,7 @@ def main():
             runcmd("service iwatch stop", abort_on_failure=False)
         
         #refresh counterpartyd_build, counterpartyd and counterblockd (if available)
-        runcmd("%s/setup.py %s --for-user=xcp update" % (base_path,
+        runcmd("%s/setup.py %s --for-user=xch update" % (base_path,
             '--with-clearblockd' if os.path.exists(os.path.join(dist_path, "clearblockd")) else ''))
         
         #refresh counterwallet (if available)
@@ -862,7 +877,7 @@ def main():
         answered_questions['clearinghoused_public'], answered_questions['clearwallet_support_email'])
     
     do_blockchain_service_setup(run_as_user, base_path, dist_path,
-        answered_questions['run_mode'], answered_questions['blockchain_service'])
+        answered_questions['run_mode'], answered_questions['blockchain_service'], bitcoind_rpc_password, bitcoind_rpc_password_testnet)
     
     if answered_questions['role'] != "clearinghoused_only":
         do_nginx_setup(run_as_user, base_path, dist_path)
