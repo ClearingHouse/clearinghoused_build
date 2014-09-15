@@ -425,7 +425,7 @@ def do_blockchain_service_setup(run_as_user, base_path, dist_path, run_mode, blo
         modify_cp_config(r'^insight\-enable=.*?$', 'insight-enable=0', config='both')
         modify_cp_config(r'^blockchain\-service\-name=.*?$', 'blockchain-service-name=addrindex', config='both')
         modify_cp_config(r'^blockchain\-service\-connect=.*?$', 'blockchain-service-connect=http://rpc:%s@localhost:5222' % bitcoin_rpc_password, config='clearblockd', net='mainnet')
-        modify_cp_config(r'^blockchain\-service\-connect=.*?$', 'blockchain-service-connect=http://rpc:%s@localhost:25222' % bitcoin_rpc_password_testne, config='clearblockd', net='testnet')
+        modify_cp_config(r'^blockchain\-service\-connect=.*?$', 'blockchain-service-connect=http://rpc:%s@localhost:25222' % bitcoin_rpc_password_testnet, config='clearblockd', net='testnet')
 
     #disable upstart scripts from autostarting on system boot if necessary
     if blockchain_service == 'i':
