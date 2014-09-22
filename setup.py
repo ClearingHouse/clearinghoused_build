@@ -26,8 +26,8 @@ except ImportError:
     pass
 
 PYTHON3_VER = None
-DEFAULT_CONFIG = "[Default]\nbackend-rpc-connect=localhost\nbackend-rpc-port=5222\nbackend-rpc-user=rpc\nbackend-rpc-password=1234\nrpc-host=localhost\nrpc-port=7300\nrpc-user=rpc\nrpc-password=xcppw1234\ninsight-enable=0\nblockchain-service-name=addrindex"
-DEFAULT_CONFIG_TESTNET = "[Default]\nbackend-rpc-connect=localhost\nbackend-rpc-port=25222\nbackend-rpc-user=rpc\nbackend-rpc-password=1234\nrpc-host=localhost\nrpc-port=17300\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=0\nblockchain-service-name=addrindex"
+DEFAULT_CONFIG = "[Default]\nbackend-rpc-connect=localhost\nbackend-rpc-port=5222\nbackend-rpc-user=rpc\nbackend-rpc-password=1234\nrpc-host=localhost\nrpc-port=7300\nrpc-user=rpc\nrpc-password=xcppw1234\ninsight-enable=0\nblockchain-service-name=addrindex\nblockchain-service-connect=http://rpc:pass@localhost:5222"
+DEFAULT_CONFIG_TESTNET = "[Default]\nbackend-rpc-connect=localhost\nbackend-rpc-port=25222\nbackend-rpc-user=rpc\nbackend-rpc-password=1234\nrpc-host=localhost\nrpc-port=17300\nrpc-user=rpc\nrpc-password=xcppw1234\ntestnet=1\ninsight-enable=0\nblockchain-service-name=addrindex\nblockchain-service-connect=http://rpc:pass@localhost:25222"
 DEFAULT_CONFIG_INSTALLER = "[Default]\nbackend-rpc-connect=BITCOIND_RPC_CONNECT\nbackend-rpc-port=BITCOIND_RPC_PORT\nbackend-rpc-user=BITCOIND_RPC_USER\nbackend-rpc-password=BITCOIND_RPC_PASSWORD\nrpc-host=RPC_HOST\nrpc-port=RPC_PORT\nrpc-user=RPC_USER\nrpc-password=RPC_PASSWORD"
 
 DEFAULT_CONFIG_COUNTERWALLETD = "[Default]\nbackend-rpc-connect=localhost\nbackend-rpc-port=5222\nbackend-rpc-user=rpc\nbackend-rpc-password=rpcpw1234\nclearinghoused-rpc-host=localhost\nclearinghoused-rpc-port=7300\nclearinghoused-rpc-user=rpc\nclearinghoused-rpc-password=xcppw1234\nrpc-host=0.0.0.0\nrpc-port=7310\nsocketio-host=0.0.0.0\nsocketio-chat-host=0.0.0.0\nredis-enable-apicache=0"
