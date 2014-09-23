@@ -766,7 +766,7 @@ def gather_build_questions(answered_questions):
     assert answered_questions['run_mode'] in QUESTION_FLAGS['run_mode']
 
     if 'blockchain_service' not in answered_questions:
-        answered_questions['blockchain_service'] = ask_question("Blockchain services, use (B)lockr.io (remote), (i)nsight (local), (a)ddrindex? (B/i/a)", ('b', 'i', 'a'), 'a')
+        answered_questions['blockchain_service'] = ask_question("Blockchain services, use (B)lockr.io (remote), (i)nsight (local), (a)ddrindex? (b/i/A)", ('b', 'i', 'a'), 'a')
         if answered_questions['blockchain_service'] == 'b':
             answer = 'blockr.io'
         elif answered_questions['blockchain_service'] == 'a':
