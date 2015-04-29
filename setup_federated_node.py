@@ -243,7 +243,7 @@ def do_bitcoind_setup(run_as_user, branch, base_path, dist_path, run_mode):
     #Install bitcoind
     BITCOIND_VER = "0.10.6.5"
     runcmd("rm -rf /tmp/viacoind.tar.gz /tmp/viacoin-%s-linux" % BITCOIND_VER)
-    runcmd("wget -O /tmp/viacoind.tar.gz https://github.com/viacoin/viacoin/releases/download/v%s/viacoin-%s-linux.tar.gz" % (BITCOIND_VER, BITCOIND_VER))
+    runcmd("wget -O /tmp/viacoind.tar.gz https://github.com/viacoin/viacoin/releases/download/v%s/viacoin-%s-linux64.tar.gz" % (BITCOIND_VER, BITCOIND_VER))
     runcmd("tar -C /tmp -zxvf /tmp/viacoind.tar.gz")
     runcmd("cp -af /tmp/viacoin-%s-linux/bin/64/viacoind /usr/local/bin" % BITCOIND_VER)
     runcmd("cp -af /tmp/viacoin-%s-linux/bin/64/viacoin-cli /usr/local/bin" % BITCOIND_VER)
