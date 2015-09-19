@@ -241,7 +241,7 @@ def do_bitcoind_setup(run_as_user, branch, base_path, dist_path, run_mode):
     bitcoind_rpc_password_testnet = pass_generator()
     
     #Install bitcoind
-    BITCOIND_VER = "0.10.6.5"
+    BITCOIND_VER = "0.10.8"
     runcmd("rm -rf /tmp/viacoind.tar.gz /tmp/viacoin-%s-linux" % BITCOIND_VER)
     runcmd("wget -O /tmp/viacoind.tar.gz https://github.com/viacoin/viacoin/releases/download/v%s/viacoin-%s-linux64.tar.gz" % (BITCOIND_VER, BITCOIND_VER))
     runcmd("tar -C /tmp -zxvf /tmp/viacoind.tar.gz")
